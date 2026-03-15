@@ -248,7 +248,7 @@ function App() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', minWidth: '200px' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem', minWidth: '200px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <div className="theme-selector" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
               <div style={{ position: 'relative' }}>
