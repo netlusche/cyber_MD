@@ -123,6 +123,10 @@
 }
 
 /* App Title Styling (CyberTasker Inspiration) */
+.app-logo {
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
 .app-title {
   font-family: var(--font-mono);
   font-size: 2.2rem;
