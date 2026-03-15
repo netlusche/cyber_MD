@@ -68,7 +68,7 @@ function App() {
   // Mobile responsiveness: prevent SPLIT layout on small screens
   useEffect(() => {
     const checkLayout = () => {
-      if (window.innerWidth < 768 && layout === 'split') {
+      if (window.innerWidth < 1024 && layout === 'split') {
         setLayout('editor');
       }
     };

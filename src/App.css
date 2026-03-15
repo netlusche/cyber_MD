@@ -343,7 +343,7 @@ ul[data-type="taskList"] li > div {
 }
 
 /* Responsive Overrides */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .split-btn-toggle {
     display: none !important;
   }

@@ -35,13 +35,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   const tablePickerRef = useRef<HTMLDivElement>(null);
 
   // Responsive Toolbar State
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) {
         setShowAdvanced(false);
       }
     };
