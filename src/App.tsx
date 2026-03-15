@@ -65,6 +65,21 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Mobile responsiveness: prevent SPLIT layout on small screens
+  useEffect(() => {
+    const checkLayout = () => {
+      if (window.innerWidth < 768 && layout === 'split') {
+        setLayout('editor');
+      }
+    };
+    
+    // Initial check
+    checkLayout();
+
+    window.addEventListener('resize', checkLayout);
+    return () => window.removeEventListener('resize', checkLayout);
+  }, [layout, setLayout]);
+
   const handleExport = async () => {
     try {
       const contentToExport = previewMode === 'markdown' ? markdown : formatHTML(html);
@@ -274,7 +289,7 @@ function App() {
                 style={{ border: 'none', borderRadius: 0, margin: 0 }}
               >EDITOR</button>
               <button 
-                className={`btn-cyber ${layout === 'split' ? 'btn-active' : ''}`} 
+                className={`btn-cyber split-btn-toggle ${layout === 'split' ? 'btn-active' : ''}`} 
                 onClick={() => setLayout('split')}
                 style={{ border: 'none', borderRadius: 0, margin: 0, borderLeft: '1px solid var(--accent)', borderRight: '1px solid var(--accent)' }}
               >SPLIT</button>
