@@ -35,22 +35,26 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   const tablePickerRef = useRef<HTMLDivElement>(null);
 
   // Responsive Toolbar State
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-      if (window.innerWidth >= 1024) {
-        setShowAdvanced(false);
-      }
-    };
+    if (!toolbarRef.current) return;
     
-    // Check on mount as well
-    handleResize();
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Toolbar needs ~750px to comfortably fit all icons single-row
+        const isCompact = entry.contentRect.width < 750;
+        setIsMobile(isCompact);
+        if (!isCompact) {
+          setShowAdvanced(false);
+        }
+      }
+    });
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    observer.observe(toolbarRef.current);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -102,7 +106,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   }, [editor]);
 
   return (
-    <div className="toolbar-container neo-border" style={{ position: 'relative', paddingRight: '3.5rem' }}>
+    <div ref={toolbarRef} className="toolbar-container neo-border" style={{ position: 'relative', paddingRight: '3.5rem' }}>
       {promptConfig && (
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
