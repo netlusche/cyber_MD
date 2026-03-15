@@ -139,7 +139,8 @@
   border-bottom: none;
 }
 
-.btn-action-dropdown:hover {
+.btn-action-dropdown:hover,
+.btn-action-dropdown.dropdown-active {
   background-color: var(--accent);
   color: var(--bg-base);
 }
@@ -167,6 +168,36 @@
 .btn-action:hover {
   filter: brightness(1.2);
   box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* Plain Theme Button Overrides */
+[data-theme="plain"] .btn-cyber.btn-active {
+  background-color: #e2e8f0;
+  color: #000;
+  border-color: #cbd5e1;
+}
+
+[data-theme="plain"] .btn-cyber:hover {
+  background-color: #f8fafc;
+  color: #000;
+  border-color: #cbd5e1;
+}
+
+[data-theme="plain"] .btn-action-dropdown:hover,
+[data-theme="plain"] .btn-action-dropdown.dropdown-active {
+  background-color: #e2e8f0;
+  color: #000;
+}
+
+[data-theme="plain"] .btn-action {
+  background-color: #e2e8f0;
+  color: #000;
+  border-color: #cbd5e1;
+}
+
+[data-theme="plain"] .btn-action:hover {
+  background-color: #cbd5e1;
+  filter: none;
 }
 
 /* App Title Styling (CyberTasker Inspiration) */
@@ -265,6 +296,70 @@
   margin-bottom: 1em;
 }
 
+/* Tiptap Task List Styling */
+.tiptap ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.tiptap ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5em;
+}
+
+.tiptap ul[data-type="taskList"] li > label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25rem; /* fine-tune alignment with text */
+  user-select: none;
+}
+
+.tiptap ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.tiptap ul[data-type="taskList"] li > div > p {
+  margin: 0; /* Remove paragraph margins inside task items */
+  line-height: 1.5;
+}
+
+/* Custom Checkbox Appearance */
+.tiptap input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background-color: var(--bg-panel);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin: 0;
+}
+
+.tiptap input[type="checkbox"]:checked {
+  background-color: #334155; /* Dark gray */
+  border-color: #334155;
+}
+
+.tiptap input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+}
+
 .tiptap code {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 0.1em 0.3em;
@@ -282,6 +377,16 @@
   overflow-x: auto;
   border: 1px solid var(--border);
   margin-bottom: 1em;
+}
+
+[data-theme="plain"] .tiptap pre {
+  background: var(--bg-code);
+  color: var(--text-main);
+}
+
+[data-theme="plain"] .tiptap code {
+  background-color: var(--bg-code);
+  color: var(--accent);
 }
 
 .tiptap blockquote {

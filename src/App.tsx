@@ -51,6 +51,7 @@ function App() {
 
   const themesList = [
     { id: 'cyberpunk', name: 'Cyberpunk' },
+    { id: 'plain', name: 'Plain Light' },
     { id: 'man-machine', name: 'Man Machine' },
     { id: 'matrix', name: 'Matrix Green' },
     { id: 'lcars', name: 'LCARS' },
@@ -329,14 +330,10 @@ function App() {
                     {themesList.map(t => (
                       <button 
                         key={t.id}
-                        className="btn-action-dropdown"
+                        className={`btn-action-dropdown ${theme === t.id ? 'dropdown-active' : ''}`}
                         onMouseDown={() => {
                           setTheme(t.id as any);
                           setThemeOpen(false);
-                        }}
-                        style={{
-                          backgroundColor: theme === t.id ? 'var(--accent)' : 'transparent',
-                          color: theme === t.id ? 'var(--bg-base)' : 'var(--text-main)',
                         }}
                       >
                         {theme === t.id ? `> ${t.name}` : t.name}
