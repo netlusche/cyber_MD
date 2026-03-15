@@ -1,0 +1,238 @@
+.split-view {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.editor-pane, .markdown-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+}
+
+.editor-content {
+  padding: 1.5rem;
+  min-height: 100%;
+  outline: none;
+}
+
+.editor-content > .tiptap {
+  outline: none;
+  min-height: 100%;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--text-muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Markdown pane specific */
+.markdown-pane {
+  padding: 1.5rem;
+  position: relative;
+}
+
+[data-theme="cyberpunk"] .editor-pane {
+  border: 2px solid var(--accent-alt);
+  box-shadow: 0 0 15px var(--accent-alt-glow), inset 0 0 10px rgba(255, 0, 255, 0.1);
+}
+
+[data-theme="cyberpunk"] .markdown-pane {
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow), inset 0 0 10px rgba(0, 255, 255, 0.1);
+}
+
+.code-output {
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.export-btn-container {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Toolbar Buttons */
+.toolbar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--bg-panel);
+  align-items: center;
+}
+
+.btn-cyber {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  background: transparent;
+  transition: all 0.2s;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.btn-cyber:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.btn-cyber.btn-active {
+  background-color: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.btn-action {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #000;
+  background-color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.btn-action:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.theme-selector {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.theme-selector select {
+  background: var(--bg-main);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  outline: none;
+  border-radius: var(--radius);
+}
+
+/* Tiptap Editor Elements Formatting */
+.tiptap h1, .tiptap h2, .tiptap h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.tiptap h1 { font-size: 2em; }
+.tiptap h2 { font-size: 1.5em; }
+.tiptap h3 { font-size: 1.17em; }
+
+.tiptap p {
+  margin-bottom: 1em;
+}
+
+.tiptap ul, .tiptap ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1em;
+}
+
+.tiptap code {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.tiptap pre {
+  background: #000;
+  color: #fff;
+  font-family: var(--font-mono);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  margin-bottom: 1em;
+}
+
+.tiptap blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  display: block;
+  margin: 1.5rem 0;
+}
+
+/* Table styles */
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.tiptap table td,
+.tiptap table th {
+  min-width: 1em;
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+.tiptap table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Task lists */
+ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+ul[data-type="taskList"] li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+ul[data-type="taskList"] li > label {
+  flex: 0 0 auto;
+  margin-right: 0.5rem;
+  user-select: none;
+}
+ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+}

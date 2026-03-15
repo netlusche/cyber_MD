@@ -1,0 +1,262 @@
+:root, html[data-theme="cyberpunk"] {
+  /* New Neon Cyberpunk Theme (Pink/Cyan from Screenshot) */
+  --bg-main: #0c0d10;
+  --bg-panel: #131418;
+  --text-main: #f0fdfa;
+  --text-muted: #78909c;
+  --accent: #00ffff; /* Neon Cyan */
+  --accent-glow: rgba(0, 255, 255, 0.6);
+  --accent-alt: #ff00ff; /* Neon Pink */
+  --accent-alt-glow: rgba(255, 0, 255, 0.6);
+  --border: #22252a;
+  --font-body: 'Courier New', Courier, monospace;
+  --font-mono: 'Courier New', Courier, monospace;
+  --radius: 8px;
+}
+
+[data-theme="man-machine"] {
+  /* Man Machine Theme (inspired by Kraftwerk) */
+  --bg-main: #0a0a0c;
+  --bg-panel: #121216;
+  --text-main: #e0e0e0;
+  --text-muted: #888;
+  --accent: #ff003c;
+  --accent-glow: rgba(255, 0, 60, 0.6);
+  --border: #2a2a35;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 0px;
+}
+
+[data-theme="matrix"] {
+  --bg-main: #000000;
+  --bg-panel: #050505;
+  --text-main: #00ff41;
+  --text-muted: #008f11;
+  --accent: #22ff66;
+  --accent-glow: rgba(0, 255, 65, 0.4);
+  --border: #003b00;
+  --font-body: 'Courier New', Courier, monospace;
+  --font-mono: 'Courier New', Courier, monospace;
+  --radius: 0px;
+}
+
+[data-theme="lcars"] {
+  --bg-main: #000000;
+  --bg-panel: #000000;
+  --text-main: #ff9900;
+  --text-muted: #cc6600;
+  --accent: #9999ff;
+  --accent-glow: transparent;
+  --border: #ff9900;
+  --font-body: 'Arial', sans-serif;
+  --font-mono: 'Courier New', monospace;
+  --radius: 20px;
+}
+
+[data-theme="megacorp"] {
+  --bg-main: #f0f2f5;
+  --bg-panel: #ffffff;
+  --text-main: #202124;
+  --text-muted: #5f6368;
+  --accent: #1a73e8;
+  --accent-glow: rgba(26, 115, 232, 0.2);
+  --border: #dadce0;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --radius: 8px;
+}
+
+[data-theme="trauma-team"] {
+  /* High-Tech Medical/Clinical Light Theme */
+  --bg-main: #ffffff;
+  --bg-panel: #eef2f7;
+  --text-main: #001f3f;
+  --text-muted: #627282;
+  --accent: #ff003c; /* Emergency Red */
+  --accent-glow: rgba(255, 0, 60, 0.4);
+  --accent-alt: #00e5ff; /* Scanner Cyan */
+  --border: #d0dbe5;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 2px;
+}
+
+[data-theme="wayyu"] {
+  /* Weyland-Yutani / Aliens - Industrial, Dirty, Warning Yellow/Black */
+  --bg-main: #181a18;
+  --bg-panel: #202421;
+  --text-main: #f0c05a; /* Warning Yellow */
+  --text-muted: #7b8f72; /* Gritty Green */
+  --accent: #ffaa00; 
+  --accent-glow: rgba(255, 170, 0, 0.3);
+  --border: #3b453a;
+  --font-body: 'Arial', sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+  --radius: 0px;
+}
+
+[data-theme="robco"] {
+  /* RobCo / FallOut Pip-Boy - Monochrome CRT Green */
+  --bg-main: #081408;
+  --bg-panel: #0a1f0a;
+  --text-main: #14ff14; /* Glowing Phosphor Green */
+  --text-muted: #0b990b;
+  --accent: #55ff55;
+  --accent-glow: rgba(20, 255, 20, 0.7);
+  --border: #14ff14;
+  --font-body: 'Courier New', Courier, monospace;
+  --font-mono: 'Courier New', Courier, monospace;
+  --radius: 4px;
+}
+
+[data-theme="outrun"] {
+  /* Outrun / Synthwave - Magenta, Purple, Neon Blue */
+  --bg-main: #0f001f;
+  --bg-panel: #1a0033;
+  --text-main: #00ffff; /* Neon Blue */
+  --text-muted: #ff00ff; /* Magenta */
+  --accent: #ff00ff;
+  --accent-glow: rgba(255, 0, 255, 0.8);
+  --border: #00ffff;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: monospace;
+  --radius: 2px;
+}
+
+[data-theme="the-grid"] {
+  /* The Grid / Tron - Pure Black and Neon Cyan */
+  --bg-main: #000000;
+  --bg-panel: #020510;
+  --text-main: #00ffff;
+  --text-muted: #008888;
+  --accent: #00ffff;
+  --accent-glow: rgba(0, 255, 255, 0.9);
+  --border: #00ffff;
+  --font-body: sans-serif;
+  --font-mono: monospace;
+  --radius: 0px;
+}
+
+[data-theme="steampunk"] {
+  /* Steampunk - Brass, Copper, Sepia, Leather */
+  --bg-main: #2b1f1a;
+  --bg-panel: #3d2b24;
+  --text-main: #d4af37; /* Brass / Gold */
+  --text-muted: #cd7f32; /* Copper */
+  --accent: #b87333;
+  --accent-glow: rgba(212, 175, 55, 0.3);
+  --border: #8b4513; /* Saddle Brown */
+  --font-body: 'Georgia', serif;
+  --font-mono: 'Courier New', Courier, monospace;
+  --radius: 6px;
+}
+
+[data-theme="the-force"] {
+  /* The Force / Star Wars - Dark Terminal with Lightsaber Accents */
+  --bg-main: #111115;
+  --bg-panel: #1a1a20;
+  --text-main: #e0e0e0;
+  --text-muted: #777;
+  --accent: #1e90ff; /* Jedi Blue */
+  --accent-glow: rgba(30, 144, 255, 0.8);
+  --accent-alt: #ff0000; /* Sith Red */
+  --border: #334;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: monospace;
+  --radius: 2px;
+}
+
+[data-theme="arakis"] {
+  /* Arrakis / Dune - Desert Sands and Spice Blue Eyes */
+  --bg-main: #cca975; /* Sand */
+  --bg-panel: #b89159; /* Darker Sand */
+  --text-main: #332211; /* Deep Brown Text */
+  --text-muted: #5e4122;
+  --accent: #00c3ff; /* Spice Melange Blue */
+  --accent-glow: rgba(0, 195, 255, 0.7);
+  --border: #8c6130;
+  --font-body: 'Georgia', serif;
+  --font-mono: monospace;
+  --radius: 0px;
+}
+
+[data-theme="comic"] {
+  /* Comic / Marvel - Pop Art, High Contrast, Primary Colors */
+  --bg-main: #ffffff;
+  --bg-panel: #fffae6; /* Slight comic paper yellow offset */
+  --text-main: #000000;
+  --text-muted: #333333;
+  --accent: #ed1d24; /* Marvel Red */
+  --accent-glow: transparent;
+  --accent-alt: #00529b; /* Hero Blue */
+  --border: #000000; /* Thick black comic borders */
+  --font-body: 'Impact', 'Comic Sans MS', sans-serif;
+  --font-mono: monospace;
+  --radius: 0px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+html[data-theme="cyberpunk"] body {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* Base utility classes for all themes */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 1rem;
+}
+
+.neo-border {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.neo-box {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
