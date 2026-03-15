@@ -3,8 +3,9 @@ import { Editor } from '@tiptap/react';
 import { 
   Bold, Italic, List, ListOrdered, CheckSquare, 
   Quote, Code, FileCode2, Image as ImageIcon, Link as LinkIcon,
-  Minus, Table as TableIcon
+  Minus, Table as TableIcon, Maximize, Minimize
 } from 'lucide-react';
+import { useAppStore } from '../store/useStore';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -12,6 +13,8 @@ interface ToolbarProps {
 
 export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   if (!editor) return null;
+
+  const { isFocusMode, setFocusMode } = useAppStore();
 
   const toggleBold = useCallback(() => editor.chain().focus().toggleBold().run(), [editor]);
   const toggleItalic = useCallback(() => editor.chain().focus().toggleItalic().run(), [editor]);
@@ -192,6 +195,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       </div>
 
       <button className="btn-cyber" onClick={setHorizontalRule} title="Horizontal Rule"><Minus size={16} /></button>
+
+      <div style={{ flex: 1 }} />
+      <button 
+        className={`btn-cyber ${isFocusMode ? 'btn-active' : ''}`} 
+        onClick={() => setFocusMode(!isFocusMode)} 
+        title="Zen Mode (Focus)"
+      >
+        {isFocusMode ? <Minimize size={16} /> : <Maximize size={16} />}
+      </button>
     </div>
   );
 };

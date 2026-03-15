@@ -41,6 +41,7 @@ const hack = (target) => {
 
 export const Editor: React.FC = () => {
   const setMarkdown = useAppStore((state) => state.setMarkdown);
+  const setHtml = useAppStore((state) => state.setHtml);
 
   const editor = useEditor({
     extensions: [
@@ -55,16 +56,56 @@ export const Editor: React.FC = () => {
       Link.configure({ openOnClick: false }),
       Markdown,
     ],
-    content: INITIAL_CONTENT,
+    content: useAppStore.getState().markdown || INITIAL_CONTENT,
     onUpdate: ({ editor }) => {
       // The markdown extension injects getMarkdown method
       const md = (editor.storage as any).markdown.getMarkdown();
       setMarkdown(md);
+      setHtml(editor.getHTML());
     },
     editorProps: {
       attributes: {
         class: 'editor-content',
       },
+      handleDrop: (view, event) => {
+        if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+          const file = event.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (e.target?.result) {
+                const schema = view.state.schema;
+                const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                const node = schema.nodes.image.create({ src: e.target.result as string });
+                const transaction = view.state.tr.insert(coordinates?.pos || view.state.selection.to, node);
+                view.dispatch(transaction);
+              }
+            };
+            reader.readAsDataURL(file);
+            return true; // handled
+          }
+        }
+        return false;
+      },
+      handlePaste: (view, event) => {
+        if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
+          const file = event.clipboardData.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (e.target?.result) {
+                const schema = view.state.schema;
+                const node = schema.nodes.image.create({ src: e.target.result as string });
+                const transaction = view.state.tr.replaceSelectionWith(node);
+                view.dispatch(transaction);
+              }
+            };
+            reader.readAsDataURL(file);
+            return true;
+          }
+        }
+        return false;
+      }
     },
   });
 
@@ -73,6 +114,7 @@ export const Editor: React.FC = () => {
       // Trigger an initial update to set the markdown
       const md = (editor.storage as any).markdown.getMarkdown();
       setMarkdown(md);
+      setHtml(editor.getHTML());
 
       // Listen for external commands (Load/New)
       const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new', content?: string }>) => {
@@ -86,6 +128,7 @@ export const Editor: React.FC = () => {
         setTimeout(() => {
           const newMd = (editor.storage as any).markdown.getMarkdown();
           setMarkdown(newMd);
+          setHtml(editor.getHTML());
         }, 10);
       };
 

@@ -8,6 +8,12 @@ interface AppState {
   setTheme: (theme: Theme) => void;
   markdown: string;
   setMarkdown: (md: string) => void;
+  html: string;
+  setHtml: (html: string) => void;
+  isFocusMode: boolean;
+  setFocusMode: (isFocusMode: boolean) => void;
+  layout: 'split' | 'editor' | 'preview';
+  setLayout: (layout: 'split' | 'editor' | 'preview') => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -17,10 +23,16 @@ export const useAppStore = create<AppState>()(
       setTheme: (theme) => set({ theme }),
       markdown: '',
       setMarkdown: (markdown) => set({ markdown }),
+      html: '',
+      setHtml: (html) => set({ html }),
+      isFocusMode: false,
+      setFocusMode: (isFocusMode) => set({ isFocusMode }),
+      layout: 'split',
+      setLayout: (layout) => set({ layout }),
     }),
     {
-      name: 'cybermd-theme-storage', // Key im localStorage
-      partialize: (state) => ({ theme: state.theme }), // Nur das Theme speichern, nicht den Markdown-Inhalt
+      name: 'cybermd-storage', // Key im localStorage (renamed from cybermd-theme-storage for backward/forward compat, or maybe keep the name?)
+      partialize: (state) => ({ theme: state.theme, markdown: state.markdown, html: state.html }), 
     }
   )
 );

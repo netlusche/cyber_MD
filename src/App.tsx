@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { Editor } from './components/Editor';
 import { useAppStore } from './store/useStore';
+import { StatusBar } from './components/StatusBar';
 
 function App() {
-  const { theme, setTheme, markdown } = useAppStore();
+  const { theme, setTheme, markdown, html, isFocusMode, layout, setLayout } = useAppStore();
+  const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -12,27 +14,31 @@ function App() {
 
   const handleExport = async () => {
     try {
+      const contentToExport = previewMode === 'markdown' ? markdown : html;
+      const fileExt = previewMode === 'markdown' ? '.md' : '.html';
+      const fileType = previewMode === 'markdown' ? 'text/markdown' : 'text/html';
+
       // Modern File System Access API (für Dialog und echtes Speichern)
       if ('showSaveFilePicker' in window) {
         // @ts-ignore - TS doesn't fully understand the new API natively yet
         const fileHandle = await window.showSaveFilePicker({
-          suggestedName: 'cyber_transmission.md',
+          suggestedName: `cyber_transmission${fileExt}`,
           types: [{
-            description: 'Markdown File',
-            accept: { 'text/markdown': ['.md'] },
+            description: `${previewMode.toUpperCase()} File`,
+            accept: { [fileType]: [fileExt] },
           }],
         });
         const writable = await fileHandle.createWritable();
-        await writable.write(markdown);
+        await writable.write(contentToExport);
         await writable.close();
         console.log('File saved successfully');
       } else {
         // Fallback for older browsers
-        const blob = new Blob([markdown], { type: 'text/markdown' });
+        const blob = new Blob([contentToExport], { type: fileType });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'cyber_transmission.md';
+        a.download = `cyber_transmission${fileExt}`;
         document.body.appendChild(a); // Required for some browsers
         a.click();
         document.body.removeChild(a);
@@ -45,7 +51,8 @@ function App() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(markdown).then(() => {
+    const contentToCopy = previewMode === 'markdown' ? markdown : html;
+    navigator.clipboard.writeText(contentToCopy).then(() => {
       // Optional: Show a subtle toast or visual feedback here
       console.log('Copied to clipboard');
     });
@@ -95,23 +102,43 @@ function App() {
   };
 
   return (
-    <div className="app-container" data-theme={theme}>
-      <header style={{ 
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-        padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <img src="./cybermd-logo.png" alt="CyberMD Logo" className="app-logo" style={{ height: '48px', objectFit: 'contain' }} />
-          <h2 className="app-title">
-            CYBER_MD
-            <span className="title-suffix">// TERMINAL</span>
-          </h2>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
-          <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
-          <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
-        </div>
+    <div className="app-container" data-theme={theme} style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      {!isFocusMode && (
+        <header style={{ 
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+          padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)',
+          flexShrink: 0
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <img src="./cybermd-logo.png" alt="CyberMD Logo" className="app-logo" style={{ height: '48px', objectFit: 'contain' }} />
+            <h2 className="app-title">
+              CYBER_MD
+              <span className="title-suffix">// TERMINAL</span>
+            </h2>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem', flexWrap: 'wrap' }}>
+            <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
+            <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
+            <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px' }} />
+            <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
+              <button 
+                className={`btn-cyber ${layout === 'editor' ? 'btn-active' : ''}`} 
+                onClick={() => setLayout('editor')}
+                style={{ border: 'none', borderRadius: 0, margin: 0 }}
+              >EDITOR</button>
+              <button 
+                className={`btn-cyber ${layout === 'split' ? 'btn-active' : ''}`} 
+                onClick={() => setLayout('split')}
+                style={{ border: 'none', borderRadius: 0, margin: 0, borderLeft: '1px solid var(--accent)', borderRight: '1px solid var(--accent)' }}
+              >SPLIT</button>
+              <button 
+                className={`btn-cyber ${layout === 'preview' ? 'btn-active' : ''}`} 
+                onClick={() => setLayout('preview')}
+                style={{ border: 'none', borderRadius: 0, margin: 0 }}
+              >PREVIEW</button>
+            </div>
+          </div>
 
         <div className="theme-selector">
           <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
@@ -133,26 +160,47 @@ function App() {
           </select>
         </div>
       </header>
+      )}
 
-      <div className="split-view">
-        <div className="editor-pane neo-box">
-          <Editor />
-        </div>
-
-        <div className="markdown-pane neo-box">
-          <h4 style={{ position: 'absolute', top: '0.5rem', right: '1rem', color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Live Markdown Out</h4>
-          <pre className="code-output">{markdown}</pre>
-          
-          <div className="export-btn-container">
-            <button className="btn-action" onClick={handleCopy} style={{ background: 'transparent', color: 'var(--accent)' }}>
-              COPY MD
-            </button>
-            <button className="btn-action" onClick={handleExport}>
-              EXPORT .MD
-            </button>
+      <div className="split-view" style={{ flex: 1, overflow: 'hidden', margin: 0, padding: isFocusMode ? '0' : '1rem' }}>
+        {((!isFocusMode && layout !== 'preview') || isFocusMode) && (
+          <div className="editor-pane neo-box" style={{ flex: isFocusMode || layout === 'editor' ? 1 : 0.5, border: isFocusMode ? 'none' : undefined, borderRadius: isFocusMode ? 0 : undefined }}>
+            <Editor />
           </div>
-        </div>
+        )}
+
+        {(!isFocusMode && layout !== 'editor') && (
+          <div className="markdown-pane neo-box" style={{ flex: layout === 'preview' ? 1 : 0.5 }}>
+            <div style={{ position: 'absolute', top: '0.5rem', right: '1rem', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
+              <button 
+                className={`btn-cyber ${previewMode === 'markdown' ? 'btn-active' : ''}`} 
+                onClick={() => setPreviewMode('markdown')}
+                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+              >MD</button>
+              <button 
+                className={`btn-cyber ${previewMode === 'html' ? 'btn-active' : ''}`} 
+                onClick={() => setPreviewMode('html')}
+                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+              >HTML</button>
+            </div>
+            
+            <pre className="code-output" style={{ flex: 1, overflow: 'auto', marginTop: '2rem', paddingBottom: '3rem' }}>
+              {previewMode === 'markdown' ? markdown : html}
+            </pre>
+            
+            <div className="export-btn-container">
+              <button className="btn-action" onClick={handleCopy} style={{ background: 'transparent', color: 'var(--accent)' }}>
+                COPY {previewMode.toUpperCase()}
+              </button>
+              <button className="btn-action" onClick={handleExport}>
+                EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+      
+      <StatusBar />
       
       {showNewConfirm && (
         <div style={{
