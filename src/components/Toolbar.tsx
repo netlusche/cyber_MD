@@ -106,7 +106,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   }, [editor]);
 
   return (
-    <div ref={toolbarRef} className="toolbar-container neo-border" style={{ position: 'relative', paddingRight: '2.75rem' }}>
+    <div ref={toolbarRef} className="toolbar-container neo-border" style={{ position: 'relative', flexWrap: 'nowrap', alignItems: 'flex-start' }}>
       {promptConfig && (
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
@@ -136,10 +136,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
         </div>
       )}
 
-      <button 
-        className={`btn-cyber ${editor.isActive('bold') ? 'btn-active' : ''}`}
-        onClick={toggleBold} title="Bold"
-      >
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', flex: 1, alignItems: 'center' }}>
+        <button 
+          className={`btn-cyber ${editor.isActive('bold') ? 'btn-active' : ''}`}
+          onClick={toggleBold} title="Bold"
+        >
         <Bold size={16} />
       </button>
       <button 
@@ -232,12 +233,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
           <button className="btn-cyber" onClick={setHorizontalRule} title="Horizontal Rule"><Minus size={16} /></button>
         </>
       )}
+      </div>
 
       <button 
         className={`btn-cyber ${isFocusMode ? 'btn-active' : ''}`} 
         onClick={() => setFocusMode(!isFocusMode)} 
         title="Zen Mode (Focus)"
-        style={{ position: 'absolute', top: '0.75rem', right: '0.25rem', zIndex: 100 }}
+        style={{ flexShrink: 0, margin: 0 }}
       >
         {isFocusMode ? <Minimize size={16} /> : <Maximize size={16} />}
       </button>
