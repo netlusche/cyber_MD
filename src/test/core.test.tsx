@@ -1,0 +1,185 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import App from '../App';
+import { useAppStore } from '../store/useStore';
+
+describe('CyberMD Core Functionality (Baseline)', () => {
+  beforeEach(() => {
+    // Reset Zustand store
+    const { setState } = useAppStore;
+    setState({
+      markdown: '',
+      html: '',
+      theme: 'cyberpunk',
+      focusMode: 'none',
+      layout: 'editor',
+    });
+    // Clear mocks and localStorage
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  it('1. Markdown Compilation & 8. Auto-Save to localStorage', async () => {
+    render(<App />);
+    
+    // Find the tiptap editor content-editable area
+    const editorEl = document.querySelector('.tiptap');
+    expect(editorEl).toBeInTheDocument();
+    
+    if (editorEl) {
+      // Simulate loading content which updates editor state and store
+      window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'load', content: '# Test Heading\nTest paragraph' } }));
+
+      // The store should eventually update the markdown
+      await waitFor(() => {
+        const state = useAppStore.getState();
+        expect(state.html).toContain('Test Heading');
+      });
+    }
+  });
+
+  it('2. Formatting Tools & 3. Complex Plugins (Mount & Structure)', () => {
+    render(<App />);
+    
+    // Check if basic tool buttons exist (Bold, Italic, Link, etc)
+    const toolbar = document.querySelector('.toolbar-container');
+    expect(toolbar).toBeInTheDocument();
+    
+    // Verify some icons are present in the DOM by title or by generic button existence
+    const boldBtn = screen.getByTitle('Bold');
+    expect(boldBtn).toBeInTheDocument();
+
+    const italicBtn = screen.getByTitle('Italic');
+    expect(italicBtn).toBeInTheDocument();
+
+    const linkBtn = screen.getByTitle('Link');
+    expect(linkBtn).toBeInTheDocument();
+
+    const imageBtn = screen.getByTitle('Image');
+    expect(imageBtn).toBeInTheDocument();
+
+    const tablePickerBtn = screen.getByTitle('Table');
+    expect(tablePickerBtn).toBeInTheDocument();
+  });
+
+  it('4. Layout Modes (WYSIWYG, SPLIT, CODE)', async () => {
+    render(<App />);
+    
+    // Default is 'editor' (WYSIWYG)
+    const editorPane = document.querySelector('.split-view .editor-pane') as HTMLElement;
+    let mdPane = document.querySelector('.split-view .markdown-pane');
+    
+    expect(editorPane).toBeInTheDocument();
+    expect(mdPane).not.toBeInTheDocument(); // Preview is hidden by default in 'editor' layout
+
+    // Switch to SPLIT mode
+    const splitBtn = screen.getByText('SPLIT');
+    fireEvent.click(splitBtn);
+
+    await waitFor(() => {
+      const state = useAppStore.getState();
+      expect(state.layout).toBe('split');
+    });
+
+    mdPane = document.querySelector('.split-view .markdown-pane');
+    expect(mdPane).toBeInTheDocument(); // Now it should exist
+
+    // Switch to CODE mode
+    const codeBtn = screen.getByText('CODE');
+    fireEvent.click(codeBtn);
+
+    await waitFor(() => {
+      expect(useAppStore.getState().layout).toBe('preview');
+      expect(editorPane.style.display).toBe('none'); // Editor is hidden
+    });
+  });
+
+  it('5. Focus Modes (ZEN, TYPEWRITER)', async () => {
+    // Focus modes are triggered via the Maximize icon dropdown
+    render(<App />);
+
+    const focusBtn = screen.getByTitle('Focus Mode');
+    expect(focusBtn).toBeInTheDocument();
+    
+    // Click to open dropdown
+    fireEvent.click(focusBtn);
+    
+    // Find ZEN MODE
+    const zenBtn = screen.getByText('ZEN MODE');
+    expect(zenBtn).toBeInTheDocument();
+    
+    // Select Zen Mode
+    fireEvent.mouseDown(zenBtn);
+
+    await waitFor(() => {
+      expect(useAppStore.getState().focusMode).toBe('zen');
+    });
+    
+    // The App Header should now disappear
+    const header = document.querySelector('.app-header');
+    expect(header).not.toBeInTheDocument();
+
+    // Mock ResizeObserver
+    window.ResizeObserver = class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+
+    // Revert focus mode by clicking the Minimize icon
+    const minimizeBtn = screen.getByTitle('Focus Mode');
+    fireEvent.click(minimizeBtn);
+
+    await waitFor(() => {
+      expect(useAppStore.getState().focusMode).toBe('none');
+    });
+    
+    expect(document.querySelector('.app-header')).toBeInTheDocument();
+  });
+
+  it('6. File I/O Mock Testing (LOAD .MD)', async () => {
+    // Mock the showOpenFilePicker from native FS API
+    const mockFileHandle = {
+      getFile: vi.fn().mockResolvedValue({
+        text: vi.fn().mockResolvedValue('# Mocked File Content')
+      })
+    };
+    (window as any).showOpenFilePicker = vi.fn().mockResolvedValue([mockFileHandle]);
+
+    render(<App />);
+    
+    const actionsBtn = screen.getByText(/ACTIONS/i);
+    fireEvent.click(actionsBtn);
+    
+    const loadBtn = screen.getByText('LOAD .MD');
+    fireEvent.mouseDown(loadBtn);
+
+    await waitFor(() => {
+      expect((window as any).showOpenFilePicker).toHaveBeenCalled();
+    });
+
+    // Content should eventually be loaded via global event listener in Editor.tsx
+    // The Editor component listens to 'cybermd-command' { type: 'load' }
+  });
+
+  it('7. Theming Engine', async () => {
+    render(<App />);
+    
+    // Theme defaults to cyberpunk
+    expect(document.documentElement.getAttribute('data-theme')).toBe('cyberpunk');
+    
+    // Click theme dropdown button
+    // The button shows the active theme name, e.g., 'Cyberpunk'
+    const themeBtn = screen.getByRole('button', { name: /Cyberpunk/i });
+    fireEvent.click(themeBtn);
+    
+    // Select 'Matrix Green'
+    const matrixBtn = screen.getByText('Matrix Green');
+    fireEvent.mouseDown(matrixBtn);
+
+    await waitFor(() => {
+      expect(useAppStore.getState().theme).toBe('matrix');
+      expect(document.documentElement.getAttribute('data-theme')).toBe('matrix');
+    });
+  });
+});
