@@ -239,10 +239,10 @@ function App() {
               </button>
               {actionsOpen && (
                 <div className="custom-dropdown-menu">
-                  <button className="btn-action-dropdown" onClick={() => { handleNewClick(); setActionsOpen(false); }}>NEW</button>
-                  <button className="btn-action-dropdown" onClick={() => { handleLoad(); setActionsOpen(false); }}>LOAD .MD</button>
-                  <button className="btn-action-dropdown" onClick={() => { handleLoadHtml(); setActionsOpen(false); }}>LOAD .HTML</button>
-                  <button className="btn-action-dropdown" onClick={() => { handleDemo(); setActionsOpen(false); }}>TUTORIAL</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleNewClick(); setActionsOpen(false); }}>NEW</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleLoad(); setActionsOpen(false); }}>LOAD .MD</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleLoadHtml(); setActionsOpen(false); }}>LOAD .HTML</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleDemo(); setActionsOpen(false); }}>TUTORIAL</button>
                 </div>
               )}
             </div>
@@ -265,7 +265,7 @@ function App() {
                       <button 
                         key={t.id}
                         className="btn-action-dropdown"
-                        onClick={() => {
+                        onMouseDown={() => {
                           setTheme(t.id as any);
                           setThemeOpen(false);
                         }}
