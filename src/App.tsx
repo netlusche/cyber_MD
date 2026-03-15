@@ -102,10 +102,15 @@ function App() {
     setShowNewConfirm(false);
   };
 
+  const [showDemoConfirm, setShowDemoConfirm] = useState(false);
+
   const handleDemo = () => {
-    if (confirm("Reset current document and load the CyberMD Demo?")) {
-      window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'demo' } }));
-    }
+    setShowDemoConfirm(true);
+  };
+
+  const confirmDemo = () => {
+    window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'demo' } }));
+    setShowDemoConfirm(false);
   };
 
   const handleLoad = async () => {
@@ -278,17 +283,36 @@ function App() {
       {showNewConfirm && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 100,
+          backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 999,
           display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
-          <div className="neo-box" style={{ padding: '2rem', maxWidth: '400px', textAlign: 'center' }}>
-            <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', textTransform: 'uppercase' }}>Warning</h3>
-            <p style={{ marginBottom: '1.5rem', color: 'var(--text-main)' }}>
-              Bist du sicher? Alle ungespeicherten Änderungen gehen verloren.
+          <div className="neo-box" style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', backgroundColor: 'var(--bg-panel)' }}>
+            <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', textShadow: '0 0 10px var(--accent-glow)' }}>WARNING</h3>
+            <p style={{ marginBottom: '2rem', lineHeight: 1.5 }}>
+              Are you sure? All unsaved changes will be lost.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button className="btn-action" onClick={confirmNew}>PROCEED</button>
               <button className="btn-cyber" onClick={() => setShowNewConfirm(false)}>CANCEL</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDemoConfirm && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div className="neo-box" style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', backgroundColor: 'var(--bg-panel)' }}>
+            <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', textShadow: '0 0 10px var(--accent-glow)' }}>WARNING</h3>
+            <p style={{ marginBottom: '2rem', lineHeight: 1.5 }}>
+              Are you sure you want to load the Demo? All unsaved changes will be overwritten.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn-action" onClick={confirmDemo}>PROCEED</button>
+              <button className="btn-cyber" onClick={() => setShowDemoConfirm(false)}>CANCEL</button>
             </div>
           </div>
         </div>
