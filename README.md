@@ -11,7 +11,7 @@ Designed for a responsive, fast, and highly customizable writing experience with
 - **Advanced Formatting:** Full support for Headers, Bold/Italic, Blockquotes, Inline Code, Code Blocks, Task Lists (Checkboxes), and interactive Data Tables.
 - **Image Integration (Base64):** Drag and drop or paste images seamlessly. They are automatically converted into Base64 strings and embedded natively into your document without external hosting.
 - **Auto-Save Draft:** Your document state (ast, markdown, and html) is perpetually auto-saved locally in your browser. Never lose unsaved changes again.
-- **Focus & Layout Modes:** Enter **ZEN Mode** to hide all UI clutter, or seamlessly toggle between Split-Screen, Full Editor, or Full Preview layouts.
+- **Focus & Layout Modes:** Enter **ZEN Mode** to hide all UI clutter, enable **Typewriter Mode** to keep your active typing line perfectly centered, or seamlessly toggle between Split-Screen, Full Editor, or Full Preview layouts.
 - **Status Bar:** Keep track of live words, characters, and estimated reading time via a persistent, terminal-style footer.
 - **Cyberpunk UI & 12+ Themes:** Choose from a wide variety of Sci-Fi and Pop Culture themes including:
   - Neon Cyberpunk
@@ -28,7 +28,9 @@ Designed for a responsive, fast, and highly customizable writing experience with
   - Arrakis (Dune)
   - Comic (Marvel)
   - Megacorp (Light Corporate Mode)
+  - Plain Light (Minimalist Bright Mode)
 - **Local File Management:** Safely load existing `.md` files directly from your disk and export/download your work via the native File System Access API.
+- **Export to PDF:** Generate beautiful, high-quality PDFs out of your drafts that perfectly mirror your currently active Cyberpunk theme colors and fonts.
 - **Custom UI Overlays:** Interactive URL/Image prompts and an MS Word-style 8x8 grid for dynamic table insertion. No native browser blocks or focus issues.
 
 ## Tech Stack
@@ -68,7 +70,7 @@ Ready to connect your terminal to the Editor?
 ## Usage
 - **NEW / DEMO:** Clears the editor or loads the base CyberMD tutorial. Shows a stylized cyberpunk warning modal to prevent accidental data loss.
 - **LOAD .MD / .HTML:** Opens your file browser to pick a local markdown or HTML file and loads it deeply into the Tiptap structure. Base64 images are supported.
-- **EXPORT / COPY:** Toggle your preview pane to `.md` or `.html` to download the specific compiled document natively to your disk or copy the raw output to your clipboard.
+- **EXPORT / COPY:** Export your document natively to your disk as `.md`, `.html` or high-quality styled `.pdf` right from the dropdowns, or copy raw outputs to your clipboard.
 - **ZEN:** Hides toolbars and UI panels for a distraction-free writing experience.
 - **LAYOUT:** Switch between `EDITOR`, `SPLIT`, and `PREVIEW` modes dynamically to suit your screen space.
 
