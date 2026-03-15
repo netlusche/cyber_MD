@@ -23,11 +23,11 @@ export const StatusBar: React.FC = () => {
       boxShadow: '0 -2px 10px rgba(0,0,0,0.5)'
     }}>
       <div style={{ display: 'flex', gap: '1.5rem' }}>
-        <span>[ STATUS ]: ONLINE {words > 0 && <span style={{ color: 'var(--accent)' }}>// DRAFT SAVED</span>}</span>
+        <span className="hide-mobile">[ STATUS ]: ONLINE {words > 0 && <span style={{ color: 'var(--accent)' }}>// DRAFT SAVED</span>}</span>
         <span>[ WORDS ]: {words}</span>
         <span>[ CHARS ]: {chars}</span>
       </div>
-      <div>
+      <div className="hide-mobile">
         <span>[ EST. READING TIME ]: {readingTime} MIN</span>
       </div>
     </div>

@@ -348,3 +348,9 @@ ul[data-type="taskList"] li > div {
     display: none !important;
   }
 }
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
