@@ -54,7 +54,7 @@ export const Editor: React.FC = () => {
       TableCell,
       Image,
       Link.configure({ openOnClick: false }),
-      Markdown,
+      Markdown.configure({ html: true }),
     ],
     content: useAppStore.getState().html || useAppStore.getState().markdown || INITIAL_CONTENT,
     onUpdate: ({ editor }) => {
