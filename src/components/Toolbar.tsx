@@ -3,7 +3,7 @@ import { Editor } from '@tiptap/react';
 import { 
   Bold, Italic, List, ListOrdered, CheckSquare, 
   Quote, Code, FileCode2, Image as ImageIcon, Link as LinkIcon,
-  Minus, Table as TableIcon, Maximize, Minimize
+  Minus, Table as TableIcon, Maximize, Minimize, MoreHorizontal
 } from 'lucide-react';
 import { useAppStore } from '../store/useStore';
 
@@ -33,6 +33,25 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   const [showTablePicker, setShowTablePicker] = useState(false);
   const [hoveredTableSize, setHoveredTableSize] = useState({ r: 0, c: 0 });
   const tablePickerRef = useRef<HTMLDivElement>(null);
+
+  // Responsive Toolbar State
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setShowAdvanced(false);
+      }
+    };
+    
+    // Check on mount as well
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -138,63 +157,77 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       <button className={`btn-cyber ${editor.isActive('orderedList') ? 'btn-active' : ''}`} onClick={toggleOrderedList} title="Ordered List"><ListOrdered size={16} /></button>
       <button className={`btn-cyber ${editor.isActive('taskList') ? 'btn-active' : ''}`} onClick={toggleTaskList} title="Task List"><CheckSquare size={16} /></button>
       
-      <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
-
-      <button className={`btn-cyber ${editor.isActive('blockquote') ? 'btn-active' : ''}`} onClick={toggleBlockquote} title="Blockquote"><Quote size={16} /></button>
-      <button className={`btn-cyber ${editor.isActive('code') ? 'btn-active' : ''}`} onClick={toggleCode} title="Inline Code"><Code size={16} /></button>
-      <button className={`btn-cyber ${editor.isActive('codeBlock') ? 'btn-active' : ''}`} onClick={toggleCodeBlock} title="Code Block"><FileCode2 size={16} /></button>
-      
-      <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
-
-      <button className="btn-cyber" onClick={addLink} title="Link"><LinkIcon size={16} /></button>
-      <button className="btn-cyber" onClick={addImage} title="Image"><ImageIcon size={16} /></button>
-      
-      <div style={{ position: 'relative' }} ref={tablePickerRef}>
+      {isMobile && (
         <button 
-          className="btn-cyber" 
-          onClick={() => setShowTablePicker(!showTablePicker)} 
-          title="Table"
+          className={`btn-cyber ${showAdvanced ? 'btn-active' : ''}`} 
+          onClick={() => setShowAdvanced(!showAdvanced)} 
+          title="More Tools"
         >
-          <TableIcon size={16} />
+          <MoreHorizontal size={16} />
         </button>
-        
-        {showTablePicker && (
-          <div style={{
-            position: 'absolute', top: '100%', left: 0, marginTop: '0.5rem',
-            backgroundColor: 'var(--bg-panel)', border: '1px solid var(--border)',
-            padding: '0.5rem', borderRadius: 'var(--radius)', zIndex: 50,
-            boxShadow: '0 0 10px rgba(0,0,0,0.5)'
-          }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px', marginBottom: '0.5rem' }}>
-              {Array.from({ length: 8 }).map((_, rowIndex) => (
-                Array.from({ length: 8 }).map((_, colIndex) => {
-                  const r = rowIndex + 1;
-                  const c = colIndex + 1;
-                  const isHovered = r <= hoveredTableSize.r && c <= hoveredTableSize.c;
-                  return (
-                    <div 
-                      key={`${r}-${c}`}
-                      onMouseEnter={() => setHoveredTableSize({ r, c })}
-                      onClick={() => insertTable(r, c)}
-                      style={{
-                        width: '18px', height: '18px',
-                        border: '1px solid var(--border)',
-                        backgroundColor: isHovered ? 'var(--accent)' : 'transparent',
-                        cursor: 'pointer', transition: 'background-color 0.1s'
-                      }}
-                    />
-                  );
-                })
-              ))}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
-              {hoveredTableSize.r > 0 ? `${hoveredTableSize.c} x ${hoveredTableSize.r} Table` : 'Select Size'}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
 
-      <button className="btn-cyber" onClick={setHorizontalRule} title="Horizontal Rule"><Minus size={16} /></button>
+      {(!isMobile || showAdvanced) && (
+        <>
+          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
+
+          <button className={`btn-cyber ${editor.isActive('blockquote') ? 'btn-active' : ''}`} onClick={toggleBlockquote} title="Blockquote"><Quote size={16} /></button>
+          <button className={`btn-cyber ${editor.isActive('code') ? 'btn-active' : ''}`} onClick={toggleCode} title="Inline Code"><Code size={16} /></button>
+          <button className={`btn-cyber ${editor.isActive('codeBlock') ? 'btn-active' : ''}`} onClick={toggleCodeBlock} title="Code Block"><FileCode2 size={16} /></button>
+          
+          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
+
+          <button className="btn-cyber" onClick={addLink} title="Link"><LinkIcon size={16} /></button>
+          <button className="btn-cyber" onClick={addImage} title="Image"><ImageIcon size={16} /></button>
+          
+          <div style={{ position: 'relative' }} ref={tablePickerRef}>
+            <button 
+              className="btn-cyber" 
+              onClick={() => setShowTablePicker(!showTablePicker)} 
+              title="Table"
+            >
+              <TableIcon size={16} />
+            </button>
+            
+            {showTablePicker && (
+              <div style={{
+                position: 'absolute', top: '100%', left: 0, marginTop: '0.5rem',
+                backgroundColor: 'var(--bg-panel)', border: '1px solid var(--border)',
+                padding: '0.5rem', borderRadius: 'var(--radius)', zIndex: 50,
+                boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px', marginBottom: '0.5rem' }}>
+                  {Array.from({ length: 8 }).map((_, rowIndex) => (
+                    Array.from({ length: 8 }).map((_, colIndex) => {
+                      const r = rowIndex + 1;
+                      const c = colIndex + 1;
+                      const isHovered = r <= hoveredTableSize.r && c <= hoveredTableSize.c;
+                      return (
+                        <div 
+                          key={`${r}-${c}`}
+                          onMouseEnter={() => setHoveredTableSize({ r, c })}
+                          onClick={() => insertTable(r, c)}
+                          style={{
+                            width: '18px', height: '18px',
+                            border: '1px solid var(--border)',
+                            backgroundColor: isHovered ? 'var(--accent)' : 'transparent',
+                            cursor: 'pointer', transition: 'background-color 0.1s'
+                          }}
+                        />
+                      );
+                    })
+                  ))}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
+                  {hoveredTableSize.r > 0 ? `${hoveredTableSize.c} x ${hoveredTableSize.r} Table` : 'Select Size'}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button className="btn-cyber" onClick={setHorizontalRule} title="Horizontal Rule"><Minus size={16} /></button>
+        </>
+      )}
 
       <div style={{ flex: 1 }} />
       <button 
