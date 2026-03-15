@@ -189,10 +189,10 @@ function App() {
           </div>
           
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center' }}>
-            <button className="btn-cyber" onClick={handleDemo} style={{ color: 'var(--accent)' }}>DEMO</button>
             <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
             <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
             <button className="btn-cyber" onClick={handleLoadHtml}>LOAD .HTML</button>
+            <button className="btn-cyber" onClick={handleDemo} style={{ color: 'var(--accent)' }}>DEMO</button>
             <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px' }} />
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
               <button 
