@@ -42,6 +42,24 @@ function App() {
   const { theme, setTheme, markdown, html, isFocusMode, layout, setLayout } = useAppStore();
   const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
   const [actionsOpen, setActionsOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
+
+  const themesList = [
+    { id: 'cyberpunk', name: 'Cyberpunk' },
+    { id: 'man-machine', name: 'Man Machine' },
+    { id: 'matrix', name: 'Matrix Green' },
+    { id: 'lcars', name: 'LCARS' },
+    { id: 'megacorp', name: 'Megacorp' },
+    { id: 'trauma-team', name: 'MedBay' },
+    { id: 'wayyu', name: 'Wey-Yu' },
+    { id: 'robco', name: 'RobCo' },
+    { id: 'outrun', name: 'Outrun' },
+    { id: 'the-grid', name: 'The Grid' },
+    { id: 'steampunk', name: 'Steampunk' },
+    { id: 'the-force', name: 'The Force' },
+    { id: 'arakis', name: 'Arrakis' },
+    { id: 'comic', name: 'Comic' },
+  ];
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -218,22 +236,35 @@ function App() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', minWidth: '200px' }}>
             <div className="theme-selector" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
-              <select value={theme} onChange={(e) => setTheme(e.target.value as any)}>
-                <option value="cyberpunk">Cyberpunk</option>
-                <option value="man-machine">Man Machine</option>
-                <option value="matrix">Matrix Green</option>
-                <option value="lcars">LCARS</option>
-                <option value="megacorp">Megacorp</option>
-                <option value="trauma-team">MedBay</option>
-                <option value="wayyu">Wey-Yu</option>
-                <option value="robco">RobCo</option>
-                <option value="outrun">Outrun</option>
-                <option value="the-grid">The Grid</option>
-                <option value="steampunk">Steampunk</option>
-                <option value="the-force">The Force</option>
-                <option value="arakis">Arrakis</option>
-                <option value="comic">Comic</option>
-              </select>
+              <div style={{ position: 'relative' }}>
+                <button 
+                  className="btn-cyber" 
+                  onClick={() => setThemeOpen(!themeOpen)}
+                  style={{ minWidth: '140px', justifyContent: 'space-between' }}
+                >
+                  {themesList.find(t => t.id === theme)?.name || 'THEME'} <ChevronDown size={16} />
+                </button>
+                {themeOpen && (
+                  <div className="custom-dropdown-menu" style={{ right: 0, left: 'auto', maxHeight: '50vh', overflowY: 'auto' }}>
+                    {themesList.map(t => (
+                      <button 
+                        key={t.id}
+                        className="btn-action-dropdown"
+                        onClick={() => {
+                          setTheme(t.id as any);
+                          setThemeOpen(false);
+                        }}
+                        style={{
+                          backgroundColor: theme === t.id ? 'var(--accent)' : 'transparent',
+                          color: theme === t.id ? 'var(--bg-base)' : 'var(--text-main)',
+                        }}
+                      >
+                        {theme === t.id ? `> ${t.name}` : t.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
