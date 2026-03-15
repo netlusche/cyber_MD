@@ -37,6 +37,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   // Responsive Toolbar State
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSuperCompact, setIsSuperCompact] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
@@ -46,7 +47,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       for (const entry of entries) {
         // Toolbar needs ~750px to comfortably fit all icons single-row
         const isCompact = entry.contentRect.width < 750;
+        const isSuper = entry.contentRect.width < 450;
         setIsMobile(isCompact);
+        setIsSuperCompact(isSuper);
         if (!isCompact) {
           setShowAdvanced(false);
         }
@@ -156,11 +159,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       <button className={`btn-cyber ${editor.isActive('heading', { level: 2 }) ? 'btn-active' : ''}`} onClick={toggleH2}>H2</button>
       <button className={`btn-cyber ${editor.isActive('heading', { level: 3 }) ? 'btn-active' : ''}`} onClick={toggleH3}>H3</button>
 
-      <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
-
-      <button className={`btn-cyber ${editor.isActive('bulletList') ? 'btn-active' : ''}`} onClick={toggleBulletList} title="Bullet List"><List size={16} /></button>
-      <button className={`btn-cyber ${editor.isActive('orderedList') ? 'btn-active' : ''}`} onClick={toggleOrderedList} title="Ordered List"><ListOrdered size={16} /></button>
-      <button className={`btn-cyber ${editor.isActive('taskList') ? 'btn-active' : ''}`} onClick={toggleTaskList} title="Task List"><CheckSquare size={16} /></button>
+      {(!isSuperCompact || showAdvanced) && (
+        <>
+          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
+          <button className={`btn-cyber ${editor.isActive('bulletList') ? 'btn-active' : ''}`} onClick={toggleBulletList} title="Bullet List"><List size={16} /></button>
+          <button className={`btn-cyber ${editor.isActive('orderedList') ? 'btn-active' : ''}`} onClick={toggleOrderedList} title="Ordered List"><ListOrdered size={16} /></button>
+          <button className={`btn-cyber ${editor.isActive('taskList') ? 'btn-active' : ''}`} onClick={toggleTaskList} title="Task List"><CheckSquare size={16} /></button>
+        </>
+      )}
       
       {isMobile && (
         <button 
