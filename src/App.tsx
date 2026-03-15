@@ -4,6 +4,39 @@ import { Editor } from './components/Editor';
 import { useAppStore } from './store/useStore';
 import { StatusBar } from './components/StatusBar';
 
+const formatHTML = (html: string) => {
+  let indentLevel = 0;
+  const tab = '  ';
+  let formatted = '';
+
+  const cleanedHtml = html.replace(/>\s*</g, '><');
+  const tokens = cleanedHtml.split(/(<[^>]+>)/g).filter(t => t.trim().length > 0);
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i].trim();
+    if (!token) continue;
+
+    if (token.match(/^<\/[a-zA-Z0-9]+>$/)) {
+      // Closing tag
+      indentLevel = Math.max(0, indentLevel - 1);
+      formatted += '\n' + tab.repeat(indentLevel) + token;
+    } else if (token.match(/^<[a-zA-Z0-9]+.*>$/)) {
+      // Opening tag
+      formatted += '\n' + tab.repeat(indentLevel) + token;
+      if (!token.match(/<(img|hr|br|input|meta|link|col)( |>|\/)/i)) {
+        indentLevel++;
+      }
+    } else {
+      // Text
+      formatted += token;
+    }
+  }
+
+  // Cleanup: collapse text on the same line as its enclosing tags
+  formatted = formatted.replace(/>([^<]*)\n\s*<\//g, '>$1</');
+  return formatted.trim();
+};
+
 function App() {
   const { theme, setTheme, markdown, html, isFocusMode, layout, setLayout } = useAppStore();
   const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
@@ -14,7 +47,7 @@ function App() {
 
   const handleExport = async () => {
     try {
-      const contentToExport = previewMode === 'markdown' ? markdown : html;
+      const contentToExport = previewMode === 'markdown' ? markdown : formatHTML(html);
       const fileExt = previewMode === 'markdown' ? '.md' : '.html';
       const fileType = previewMode === 'markdown' ? 'text/markdown' : 'text/html';
 
@@ -51,7 +84,7 @@ function App() {
   };
 
   const handleCopy = () => {
-    const contentToCopy = previewMode === 'markdown' ? markdown : html;
+    const contentToCopy = previewMode === 'markdown' ? markdown : formatHTML(html);
     navigator.clipboard.writeText(contentToCopy).then(() => {
       // Optional: Show a subtle toast or visual feedback here
       console.log('Copied to clipboard');
@@ -185,7 +218,7 @@ function App() {
             </div>
             
             <pre className="code-output" style={{ flex: 1, overflow: 'auto', marginTop: '2rem', paddingBottom: '3rem' }}>
-              {previewMode === 'markdown' ? markdown : html}
+              {previewMode === 'markdown' ? markdown : formatHTML(html)}
             </pre>
             
             <div className="export-btn-container">
