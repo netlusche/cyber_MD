@@ -101,7 +101,7 @@ function App() {
         padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)' 
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <img src="/cybermd-logo.png" alt="CyberMD Logo" style={{ height: '48px', objectFit: 'contain' }} />
+          <img src="./cybermd-logo.png" alt="CyberMD Logo" style={{ height: '48px', objectFit: 'contain' }} />
           <h2 className="app-title">
             CYBER_MD
             <span className="title-suffix">// TERMINAL</span>
