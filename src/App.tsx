@@ -102,6 +102,12 @@ function App() {
     setShowNewConfirm(false);
   };
 
+  const handleDemo = () => {
+    if (confirm("Reset current document and load the CyberMD Demo?")) {
+      window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'demo' } }));
+    }
+  };
+
   const handleLoad = async () => {
     try {
       if ('showOpenFilePicker' in window) {
@@ -183,6 +189,7 @@ function App() {
           </div>
           
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center' }}>
+            <button className="btn-cyber" onClick={handleDemo} style={{ color: 'var(--accent)' }}>DEMO</button>
             <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
             <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
             <button className="btn-cyber" onClick={handleLoadHtml}>LOAD .HTML</button>

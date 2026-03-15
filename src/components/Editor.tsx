@@ -125,12 +125,14 @@ export const Editor: React.FC = () => {
         setJson(editor.getJSON());
       }
 
-      // Listen for external commands (Load/New)
-      const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new', content?: string }>) => {
+      // Listen for external commands (Load/New/Demo)
+      const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new' | 'demo', content?: string }>) => {
         if (event.detail.type === 'load' && event.detail.content !== undefined) {
           editor.commands.setContent(event.detail.content);
         } else if (event.detail.type === 'new') {
           editor.commands.clearContent();
+        } else if (event.detail.type === 'demo') {
+          editor.commands.setContent(INITIAL_CONTENT);
         }
         
         // Ensure markdown state is synced after external change
