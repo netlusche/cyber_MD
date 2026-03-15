@@ -307,6 +307,51 @@ function App() {
         {((!isFocusMode && layout !== 'preview') || isFocusMode) && (
           <div className="editor-pane neo-box" style={{ flex: isFocusMode || layout === 'editor' ? 1 : 0.5, border: isFocusMode ? 'none' : undefined, borderRadius: isFocusMode ? 0 : undefined }}>
             <Editor />
+            { (layout === 'editor' || isFocusMode) && (
+              <div className="export-btn-container">
+                <button 
+                  className="btn-cyber" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(markdown).then(() => {
+                      console.log('Copied Markdown to clipboard');
+                    });
+                  }}
+                >
+                  COPY MD
+                </button>
+                <button 
+                  className="btn-cyber" 
+                  onClick={async () => {
+                    try {
+                      if ('showSaveFilePicker' in window) {
+                        // @ts-ignore
+                        const fileHandle = await window.showSaveFilePicker({
+                          suggestedName: `cyber_transmission.md`,
+                          types: [{ description: `MARKDOWN File`, accept: { 'text/markdown': ['.md'] } }],
+                        });
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(markdown);
+                        await writable.close();
+                      } else {
+                        const blob = new Blob([markdown], { type: 'text/markdown' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `cyber_transmission.md`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }
+                    } catch (err) {
+                      console.error('Save failed:', err);
+                    }
+                  }}
+                >
+                  EXPORT .MD
+                </button>
+              </div>
+            )}
           </div>
         )}
 
