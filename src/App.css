@@ -65,6 +65,11 @@
   gap: 0.5rem;
 }
 
+.export-btn-container .btn-cyber {
+  background-color: var(--bg-panel);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
 /* Toolbar Buttons */
 .toolbar-container {
   display: flex;
