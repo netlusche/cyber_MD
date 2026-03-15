@@ -53,7 +53,7 @@ export const Editor: React.FC = () => {
       TableRow,
       TableHeader,
       TableCell,
-      Image,
+      Image.configure({ allowBase64: true }),
       Link.configure({ openOnClick: false }),
       Markdown.configure({ html: true }),
     ],
