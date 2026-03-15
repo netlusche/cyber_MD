@@ -12,7 +12,18 @@ Implement a comprehensive, automated testing suite for **CyberMD** in the `next-
 - **Unit/Component Tests:** Vitest + React Testing Library (for pure logic and simple component mounting)
 - **E2E/Visual Tests:** Playwright (preferred due to the need to test complex visual layouts, PDF capturing with HTML2Canvas, and browser file dialogs)
 
-**KEY TEST SCENARIOS (Based on Past Bugs & Challenges):**
+**CORE FUNCTIONALITY TESTS (Mandatory Baseline):**
+Before focusing on the edge-cases, you must implement a robust baseline of E2E and Unit tests covering the entire feature set of the application:
+1. **Markdown Compilation:** Validate that Tiptap correctly parses Markdown input and generates accurate HTML/GFM output in the "CODE" (Preview) pane.
+2. **Formatting Tools:** Test all toolbar buttons (Bold, Italic, Headers 1-3, Lists, Blockquotes, Inline Code, Code Blocks, Horizontal Rules).
+3. **Complex Plugins:** Test the insertion and rendering of Interactive Tables (via the 8x8 picker grid), Image embeds (Base64 conversion and rendering), and Links.
+4. **Layout Modes:** Verify that switching between WYSIWYG, SPLIT, and CODE layouts correctly adjusts flexbox widths and visibility without breaking the UI.
+5. **Focus Modes:** Ensure ZEN mode hides the UI panels and Typewriter mode keeps the cursor vertically centered during rapid DOM changes.
+6. **File I/O:** Mock the File System Access API and test "NEW" (clearing document with warning modal), "LOAD .MD / .HTML" (loading structured content into Tiptap), and "COPY" (clipboard writing).
+7. **Theming Engine:** Verify that switching themes via the dropdown correctly injects the right CSS variables (`--bg-main`, `--text-main`, `--accent`) into the DOM root.
+8. **Auto-Save:** Confirm that typing in the editor correctly updates the Zustand store and persists data to `localStorage`.
+
+**REGRESSION TEST SCENARIOS (Based on Past Bugs & Challenges):**
 
 1. **PDF Export Reliability (The "Empty PDF Bug")**
    - *Context:* We struggled for a long time with `html2canvas` generating completely blank white PDFs because the target element was initially hidden or had `z-index: -99999`. We fixed this by rendering a dedicated, strictly visible `pdfContentRef` off-screen inside a `div` during export.
