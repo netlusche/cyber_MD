@@ -193,12 +193,28 @@ function App() {
             </h2>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center' }}>
-            <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
-            <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
-            <button className="btn-cyber" onClick={handleLoadHtml}>LOAD .HTML</button>
-            <button className="btn-cyber" onClick={handleDemo} style={{ color: 'var(--accent)' }}>DEMO</button>
-            <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px' }} />
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <select 
+              className="btn-cyber" 
+              style={{ appearance: 'auto', backgroundColor: 'var(--bg-panel)', color: 'var(--accent)', cursor: 'pointer' }}
+              onChange={(e) => {
+                const action = e.target.value;
+                if (action === 'new') handleNewClick();
+                if (action === 'load-md') handleLoad();
+                if (action === 'load-html') handleLoadHtml();
+                if (action === 'demo') handleDemo();
+                e.target.value = ''; // Reset select after action
+              }}
+              value=""
+            >
+              <option value="" disabled>ACTIONS...</option>
+              <option value="new">NEW</option>
+              <option value="load-md">LOAD .MD</option>
+              <option value="load-html">LOAD .HTML</option>
+              <option value="demo">DEMO (TUTORIAL)</option>
+            </select>
+
+            <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px', height: '24px' }} />
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
               <button 
                 className={`btn-cyber ${layout === 'editor' ? 'btn-active' : ''}`} 
@@ -221,20 +237,20 @@ function App() {
         <div className="theme-selector" style={{ flex: 1, minWidth: '200px', justifyContent: 'center' }}>
           <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
           <select value={theme} onChange={(e) => setTheme(e.target.value as any)}>
-            <option value="cyberpunk">Neon Cyberpunk</option>
-            <option value="man-machine">Man Machine (Kraftwerk)</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="man-machine">Man Machine</option>
             <option value="matrix">Matrix Green</option>
-            <option value="lcars">LCARS (Star Trek)</option>
-            <option value="megacorp">Megacorp (Light Mode)</option>
-            <option value="trauma-team">MedBay / Trauma Team (Light)</option>
-            <option value="wayyu">Weyland-Yutani (Aliens)</option>
-            <option value="robco">RobCo Term Link (Fallout)</option>
-            <option value="outrun">Outrun (Synthwave)</option>
-            <option value="the-grid">The Grid (Tron)</option>
-            <option value="steampunk">Steampunk (Brass)</option>
-            <option value="the-force">The Force (Star Wars)</option>
-            <option value="arakis">Arrakis (Dune)</option>
-            <option value="comic">Comic (Marvel)</option>
+            <option value="lcars">LCARS</option>
+            <option value="megacorp">Megacorp</option>
+            <option value="trauma-team">MedBay</option>
+            <option value="wayyu">Wey-Yu</option>
+            <option value="robco">RobCo</option>
+            <option value="outrun">Outrun</option>
+            <option value="the-grid">The Grid</option>
+            <option value="steampunk">Steampunk</option>
+            <option value="the-force">The Force</option>
+            <option value="arakis">Arrakis</option>
+            <option value="comic">Comic</option>
           </select>
         </div>
       </header>
