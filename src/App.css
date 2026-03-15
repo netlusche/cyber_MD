@@ -97,6 +97,10 @@
   box-shadow: 0 0 10px var(--accent-glow);
 }
 
+[data-theme="cyberpunk"] .btn-cyber {
+  border: 1px solid var(--accent);
+}
+
 .btn-cyber.btn-active {
   background-color: var(--accent);
   color: #000;

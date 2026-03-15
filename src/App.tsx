@@ -134,6 +134,38 @@ function App() {
     }
   };
 
+  const handleLoadHtml = async () => {
+    try {
+      if ('showOpenFilePicker' in window) {
+        // @ts-ignore
+        const [fileHandle] = await window.showOpenFilePicker({
+          types: [{
+            description: 'HTML File',
+            accept: { 'text/html': ['.html', '.htm'] },
+          }],
+          multiple: false
+        });
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'load', content } }));
+      } else {
+        // Fallback: <input type="file" />
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.html,.htm';
+        input.onchange = async (e: any) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const content = await file.text();
+          window.dispatchEvent(new CustomEvent('cybermd-command', { detail: { type: 'load', content } }));
+        };
+        input.click();
+      }
+    } catch (err) {
+      console.error('HTML File load failed or cancelled', err);
+    }
+  };
+
   return (
     <div className="app-container" data-theme={theme} style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {!isFocusMode && (
@@ -153,6 +185,7 @@ function App() {
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center' }}>
             <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
             <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
+            <button className="btn-cyber" onClick={handleLoadHtml}>LOAD .HTML</button>
             <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px' }} />
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
               <button 
