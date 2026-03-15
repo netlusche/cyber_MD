@@ -366,8 +366,12 @@ function App() {
       )}
 
       <div className="split-view" style={{ flex: 1, overflow: 'hidden', margin: 0, padding: focusMode !== 'none' ? '0' : '1rem' }}>
-        {((focusMode === 'none' && layout !== 'preview') || focusMode !== 'none') && (
-          <div className="editor-pane neo-box" style={{ flex: focusMode !== 'none' || layout === 'editor' ? 1 : 0.5, border: focusMode !== 'none' ? 'none' : undefined, borderRadius: focusMode !== 'none' ? 0 : undefined }}>
+        <div className="editor-pane neo-box" style={{ 
+          display: (focusMode === 'none' && layout === 'preview') ? 'none' : undefined,
+          flex: focusMode !== 'none' || layout === 'editor' ? 1 : 0.5, 
+          border: focusMode !== 'none' ? 'none' : undefined, 
+          borderRadius: focusMode !== 'none' ? 0 : undefined 
+        }}>
             <Editor />
             { (layout === 'editor' || focusMode !== 'none') && (
               <div className="export-btn-container" style={{ zIndex: 10 }}>
@@ -415,7 +419,6 @@ function App() {
               </div>
             )}
           </div>
-        )}
 
         {(focusMode === 'none' && layout !== 'editor') && (
           <div className="markdown-pane neo-box" style={{ flex: layout === 'preview' ? 1 : 0.5 }}>
