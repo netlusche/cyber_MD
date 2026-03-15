@@ -3,6 +3,7 @@ import './App.css';
 import { Editor } from './components/Editor';
 import { useAppStore } from './store/useStore';
 import { StatusBar } from './components/StatusBar';
+import { ChevronDown } from 'lucide-react';
 
 const formatHTML = (html: string) => {
   let indentLevel = 0;
@@ -40,6 +41,7 @@ const formatHTML = (html: string) => {
 function App() {
   const { theme, setTheme, markdown, html, isFocusMode, layout, setLayout } = useAppStore();
   const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
+  const [actionsOpen, setActionsOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -194,25 +196,23 @@ function App() {
           </div>
           
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <select 
-              className="btn-cyber" 
-              style={{ appearance: 'auto', backgroundColor: 'var(--bg-panel)', color: 'var(--accent)', cursor: 'pointer' }}
-              onChange={(e) => {
-                const action = e.target.value;
-                if (action === 'new') handleNewClick();
-                if (action === 'load-md') handleLoad();
-                if (action === 'load-html') handleLoadHtml();
-                if (action === 'demo') handleDemo();
-                e.target.value = ''; // Reset select after action
-              }}
-              value=""
-            >
-              <option value="" disabled>ACTIONS...</option>
-              <option value="new">NEW</option>
-              <option value="load-md">LOAD .MD</option>
-              <option value="load-html">LOAD .HTML</option>
-              <option value="demo">DEMO (TUTORIAL)</option>
-            </select>
+            <div style={{ position: 'relative' }}>
+              <button 
+                className="btn-cyber" 
+                onClick={() => setActionsOpen(!actionsOpen)}
+                style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}
+              >
+                ACTIONS <ChevronDown size={16} />
+              </button>
+              {actionsOpen && (
+                <div className="custom-dropdown-menu">
+                  <button className="btn-action-dropdown" onClick={() => { handleNewClick(); setActionsOpen(false); }}>NEW</button>
+                  <button className="btn-action-dropdown" onClick={() => { handleLoad(); setActionsOpen(false); }}>LOAD .MD</button>
+                  <button className="btn-action-dropdown" onClick={() => { handleLoadHtml(); setActionsOpen(false); }}>LOAD .HTML</button>
+                  <button className="btn-action-dropdown" onClick={() => { handleDemo(); setActionsOpen(false); }}>DEMO (TUTORIAL)</button>
+                </div>
+              )}
+            </div>
 
             <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px', height: '24px' }} />
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
