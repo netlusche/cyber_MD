@@ -111,10 +111,16 @@ export const Editor: React.FC = () => {
 
   useEffect(() => {
     if (editor) {
-      // Trigger an initial update to set the markdown
-      const md = (editor.storage as any).markdown.getMarkdown();
-      setMarkdown(md);
-      setHtml(editor.getHTML());
+      // Hydrate editor content from store if it hasn't been modified yet
+      const storeState = useAppStore.getState();
+      if (storeState.markdown && editor.isEmpty) {
+        editor.commands.setContent(storeState.markdown);
+      } else {
+        // Trigger an initial update to set the markdown
+        const md = (editor.storage as any).markdown.getMarkdown();
+        setMarkdown(md);
+        setHtml(editor.getHTML());
+      }
 
       // Listen for external commands (Load/New)
       const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new', content?: string }>) => {
