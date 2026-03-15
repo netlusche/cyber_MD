@@ -233,4 +233,41 @@ describe('CyberMD Core Functionality (Baseline)', () => {
     }
   });
 
+  it('10. Direct Editing in Code View (MD and HTML)', async () => {
+    render(<App />);
+    
+    // Switch to SPLIT mode to reveal the CodeEditorPane
+    const splitBtn = screen.getByText('SPLIT');
+    fireEvent.click(splitBtn);
+
+    await waitFor(() => {
+      expect(document.querySelector('.markdown-pane textarea')).toBeInTheDocument();
+    });
+
+    const textarea = document.querySelector('.markdown-pane textarea') as HTMLTextAreaElement;
+    
+    // Simulate typing new markdown
+    fireEvent.change(textarea, { target: { value: '# Editing from Code View' } });
+
+    // The store should eventually update the markdown and html
+    await waitFor(() => {
+      const state = useAppStore.getState();
+      expect(state.markdown).toBe('# Editing from Code View');
+      expect(state.html).toContain('<h1>Editing from Code View</h1>');
+    });
+
+    // Switch to HTML preview mode
+    const htmlBtn = screen.getByText('HTML');
+    fireEvent.click(htmlBtn);
+
+    // Simulate editing HTML directly
+    fireEvent.change(textarea, { target: { value: '<h2>Subtitle from HTML</h2>' } });
+
+    await waitFor(() => {
+      const state = useAppStore.getState();
+      expect(state.html).toContain('<h2>Subtitle from HTML</h2>');
+      expect(state.markdown).toContain('## Subtitle from HTML');
+    });
+  });
+
 });

@@ -160,8 +160,8 @@ export const Editor: React.FC = () => {
         setJson(editor.getJSON());
       }
 
-      // Listen for external commands (Load/New/Demo)
-      const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new' | 'demo', content?: string }>) => {
+      // Listen for external commands (Load/New/Demo/Sync)
+      const handleEditorCommand = (event: CustomEvent<{ type: 'load' | 'new' | 'demo' | 'sync', content?: string, format?: 'markdown' | 'html' }>) => {
         if (event.detail.type === 'load' && event.detail.content !== undefined) {
           editor.commands.setContent(event.detail.content);
         } else if (event.detail.type === 'new') {
@@ -171,15 +171,30 @@ export const Editor: React.FC = () => {
           setTimeout(() => {
             editor.commands.setContent(INITIAL_CONTENT);
           }, 0);
+        } else if (event.detail.type === 'sync' && event.detail.content !== undefined) {
+          // Sync event coming from CodeEditorPane
+          const extContent = event.detail.content;
+          
+          // Emit update strictly false to avoid infinite loop where tiptap triggers onUpdate
+          // which updates Zustand, which updates CodeEditorPane, which triggers sync again
+          if (event.detail.format === 'markdown') {
+             // In tiptap-markdown, we can set markdown directly via setContent
+             editor.commands.setContent(extContent);
+          } else {
+             editor.commands.setContent(extContent);
+          }
         }
         
-        // Ensure markdown state is synced after external change
-        setTimeout(() => {
-          const newMd = (editor.storage as any).markdown.getMarkdown();
-          setMarkdown(newMd);
-          setHtml(editor.getHTML());
-          setJson(editor.getJSON());
-        }, 10);
+        // Ensure markdown state is synced after external change, 
+        // IF the change didn't originate from a live sync to avoid stuttering
+        if (event.detail.type !== 'sync') {
+          setTimeout(() => {
+            const newMd = (editor.storage as any).markdown.getMarkdown();
+            setMarkdown(newMd);
+            setHtml(editor.getHTML());
+            setJson(editor.getJSON());
+          }, 10);
+        }
       };
 
       window.addEventListener('cybermd-command', handleEditorCommand as EventListener);

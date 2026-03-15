@@ -3,51 +3,23 @@ import './App.css';
 import { Editor } from './components/Editor';
 import { useAppStore } from './store/useStore';
 import { StatusBar } from './components/StatusBar';
+import { CodeEditorPane } from './components/CodeEditorPane';
 import { ChevronDown } from 'lucide-react';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 
-const formatHTML = (html: string) => {
-  let indentLevel = 0;
-  const tab = '  ';
-  let formatted = '';
-
-  const cleanedHtml = html.replace(/>\s*</g, '><');
-  const tokens = cleanedHtml.split(/(<[^>]+>)/g).filter(t => t.trim().length > 0);
-
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i].trim();
-    if (!token) continue;
-
-    if (token.match(/^<\/[a-zA-Z0-9]+>$/)) {
-      // Closing tag
-      indentLevel = Math.max(0, indentLevel - 1);
-      formatted += '\n' + tab.repeat(indentLevel) + token;
-    } else if (token.match(/^<[a-zA-Z0-9]+.*>$/)) {
-      // Opening tag
-      formatted += '\n' + tab.repeat(indentLevel) + token;
-      if (!token.match(/<(img|hr|br|input|meta|link|col)( |>|\/)/i)) {
-        indentLevel++;
-      }
-    } else {
-      // Text
-      formatted += token;
-    }
-  }
-
-  // Cleanup: collapse text on the same line as its enclosing tags
-  formatted = formatted.replace(/>([^<]*)\n\s*<\//g, '>$1</');
-  return formatted.trim();
-};
-
-function App() {
+const App = () => {
   const { theme, setTheme, markdown, html, focusMode, layout, setLayout } = useAppStore();
-  const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
   const [actionsOpen, setActionsOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
-  const [previewExportOpen, setPreviewExportOpen] = useState(false);
   const pdfExportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handlePdfExport = () => handleExportPDF();
+    window.addEventListener('cybermd-export-pdf', handlePdfExport);
+    return () => window.removeEventListener('cybermd-export-pdf', handlePdfExport);
+  }, []);
 
   const themesList = [
     { id: 'cyberpunk', name: 'Cyberpunk' },
@@ -146,51 +118,6 @@ function App() {
     }
   };
 
-  const handleExport = async () => {
-    try {
-      const contentToExport = previewMode === 'markdown' ? markdown : formatHTML(html);
-      const fileExt = previewMode === 'markdown' ? '.md' : '.html';
-      const fileType = previewMode === 'markdown' ? 'text/markdown' : 'text/html';
-
-      // Modern File System Access API (für Dialog und echtes Speichern)
-      if ('showSaveFilePicker' in window) {
-        // @ts-ignore - TS doesn't fully understand the new API natively yet
-        const fileHandle = await window.showSaveFilePicker({
-          suggestedName: `cyber_transmission${fileExt}`,
-          types: [{
-            description: `${previewMode.toUpperCase()} File`,
-            accept: { [fileType]: [fileExt] },
-          }],
-        });
-        const writable = await fileHandle.createWritable();
-        await writable.write(contentToExport);
-        await writable.close();
-        console.log('File saved successfully');
-      } else {
-        // Fallback for older browsers
-        const blob = new Blob([contentToExport], { type: fileType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `cyber_transmission${fileExt}`;
-        document.body.appendChild(a); // Required for some browsers
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-    } catch (err) {
-      // Error handling (e.g. if the user cancels the save dialog)
-      console.error('Save cancelled or failed:', err);
-    }
-  };
-
-  const handleCopy = () => {
-    const contentToCopy = previewMode === 'markdown' ? markdown : formatHTML(html);
-    navigator.clipboard.writeText(contentToCopy).then(() => {
-      // Optional: Show a subtle toast or visual feedback here
-      console.log('Copied to clipboard');
-    });
-  };
 
   const [showNewConfirm, setShowNewConfirm] = useState(false);
 
@@ -421,37 +348,7 @@ function App() {
           </div>
 
         {(focusMode === 'none' && layout !== 'editor') && (
-          <div className="markdown-pane neo-box" style={{ flex: layout === 'preview' ? 1 : 0.5 }}>
-            <div style={{ position: 'absolute', top: '0.5rem', right: '1rem', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
-              <button 
-                className={`btn-cyber ${previewMode === 'markdown' ? 'btn-active' : ''}`} 
-                onClick={() => setPreviewMode('markdown')}
-                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
-              >MD</button>
-              <button 
-                className={`btn-cyber ${previewMode === 'html' ? 'btn-active' : ''}`} 
-                onClick={() => setPreviewMode('html')}
-                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
-              >HTML</button>
-            </div>
-            
-            <pre className="code-output" style={{ flex: 1, overflow: 'auto', marginTop: '2rem', paddingBottom: '3rem' }}>
-              {previewMode === 'markdown' ? markdown : formatHTML(html)}
-            </pre>
-            
-            <div className="export-btn-container" style={{ zIndex: 10 }}>
-              <button className="btn-cyber" onClick={() => setPreviewExportOpen(!previewExportOpen)}>
-                EXPORT <ChevronDown size={16} style={{ marginLeft: '4px' }}/>
-              </button>
-              {previewExportOpen && (
-                <div className="custom-dropdown-menu" style={{ bottom: '100%', top: 'auto', marginBottom: '8px', right: 0, left: 'auto' }}>
-                  <button className="btn-action-dropdown" onMouseDown={() => { handleCopy(); setPreviewExportOpen(false); }}>COPY {previewMode.toUpperCase()}</button>
-                  <button className="btn-action-dropdown" onMouseDown={() => { handleExport(); setPreviewExportOpen(false); }}>EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}</button>
-                  <button className="btn-action-dropdown" onMouseDown={() => { handleExportPDF(); setPreviewExportOpen(false); }}>EXPORT PDF</button>
-                </div>
-              )}
-            </div>
-          </div>
+          <CodeEditorPane />
         )}
       </div>
       

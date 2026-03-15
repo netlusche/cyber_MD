@@ -11,8 +11,11 @@ Designed for a responsive, fast, and highly customizable writing experience with
 - **Advanced Formatting:** Full support for Headers, Bold/Italic, Blockquotes, Inline Code, Code Blocks, Task Lists (Checkboxes), and interactive Data Tables.
 - **Image Integration (Base64):** Drag and drop or paste images seamlessly. They are automatically converted into Base64 strings and embedded natively into your document without external hosting.
 - **Auto-Save Draft:** Your document state (ast, markdown, and html) is perpetually auto-saved locally in your browser. Never lose unsaved changes again.
-- **Focus & Layout Modes:** Enter **ZEN Mode** to hide all UI clutter, enable **Typewriter Mode** to keep your active typing line perfectly centered, or seamlessly toggle between Split-Screen, Full Editor, or Full Preview layouts.
-- **Status Bar:** Keep track of live words, characters, and estimated reading time via a persistent, terminal-style footer.
+- 🎨 **14+ Diverse Themes:** Inspired by Cyberpunk, Matrix, Fallout, Star Trek, and custom 80s synthwave aesthetics.
+- ✨ **Rich Formatting:** WYSIWYG editor powered by Tiptap (Bold, Italics, Lists, Tables, Tasks).
+- 🧑‍💻 **Direct Editing in Code View:** Edit raw Markdown or HTML directly and immediately sync changes to the WYSIWYG editor.
+- 🔀 **Multiple Views:** Toggle between Editor (WYSIWYG), Split (Editor + Code), and Code (Raw MD/HTML) views.
+- 🧘 **Focus Modes:** Clean your workspace using Zen Mode or hone in with Typewriter Mode.s, and estimated reading time via a persistent, terminal-style footer.
 - **Cyberpunk UI & 12+ Themes:** Choose from a wide variety of Sci-Fi and Pop Culture themes including:
   - Neon Cyberpunk
   - Man Machine (Kraftwerk)
