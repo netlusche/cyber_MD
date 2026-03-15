@@ -113,6 +113,16 @@ export const Editor: React.FC = () => {
 
   useEffect(() => {
     if (editor) {
+      // Patch markdown-it to allow base64 image data URIs
+      const mdEngine = (editor.storage as any).markdown?.parser?.md;
+      if (mdEngine && mdEngine.validateLink) {
+        const originalValidateLink = mdEngine.validateLink.bind(mdEngine);
+        mdEngine.validateLink = (url: string) => {
+          if (url.startsWith('data:image/')) return true;
+          return originalValidateLink(url);
+        };
+      }
+
       // Hydrate editor content from store if it hasn't been modified yet
       const storeState = useAppStore.getState();
       if ((storeState.json || storeState.html || storeState.markdown) && editor.isEmpty) {
