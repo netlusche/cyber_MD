@@ -160,32 +160,34 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       <button className={`btn-cyber ${editor.isActive('heading', { level: 2 }) ? 'btn-active' : ''}`} onClick={toggleH2}>H2</button>
       <button className={`btn-cyber ${editor.isActive('heading', { level: 3 }) ? 'btn-active' : ''}`} onClick={toggleH3}>H3</button>
 
+      {isSuperCompact && (
+        <button className={`btn-cyber ${showAdvanced ? 'btn-active' : ''}`} onClick={() => setShowAdvanced(!showAdvanced)} title="More Tools">
+          <MoreHorizontal size={16} />
+        </button>
+      )}
 
-
-      {showAdvanced && <div style={{ flexBasis: '100%', height: 0 }} />}
+      {isSuperCompact && showAdvanced && <div style={{ flexBasis: '100%', height: 0 }} />}
 
       {(!isSuperCompact || showAdvanced) && (
         <>
-          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px', display: showAdvanced ? 'none' : 'block' }} />
+          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px', display: (isSuperCompact && showAdvanced) ? 'none' : 'block' }} />
           <button className={`btn-cyber ${editor.isActive('bulletList') ? 'btn-active' : ''}`} onClick={toggleBulletList} title="Bullet List"><List size={16} /></button>
           <button className={`btn-cyber ${editor.isActive('orderedList') ? 'btn-active' : ''}`} onClick={toggleOrderedList} title="Ordered List"><ListOrdered size={16} /></button>
           <button className={`btn-cyber ${editor.isActive('taskList') ? 'btn-active' : ''}`} onClick={toggleTaskList} title="Task List"><CheckSquare size={16} /></button>
-          
-          {isMobile && (
-            <button 
-              className={`btn-cyber ${showAdvanced ? 'btn-active' : ''}`} 
-              onClick={() => setShowAdvanced(!showAdvanced)} 
-              title="More Tools"
-            >
-              <MoreHorizontal size={16} />
-            </button>
-          )}
         </>
       )}
 
+      {!isSuperCompact && isMobile && (
+        <button className={`btn-cyber ${showAdvanced ? 'btn-active' : ''}`} onClick={() => setShowAdvanced(!showAdvanced)} title="More Tools">
+          <MoreHorizontal size={16} />
+        </button>
+      )}
+
+      {!isSuperCompact && isMobile && showAdvanced && <div style={{ flexBasis: '100%', height: 0 }} />}
+
       {(!isMobile || showAdvanced) && (
         <>
-          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px' }} />
+          <div style={{ width: '1px', height: '20px', background: 'var(--border)', margin: '0 4px', display: (!isSuperCompact && isMobile && showAdvanced) ? 'none' : 'block' }} />
 
           <button className={`btn-cyber ${editor.isActive('blockquote') ? 'btn-active' : ''}`} onClick={toggleBlockquote} title="Blockquote"><Quote size={16} /></button>
           <button className={`btn-cyber ${editor.isActive('code') ? 'btn-active' : ''}`} onClick={toggleCode} title="Inline Code"><Code size={16} /></button>
