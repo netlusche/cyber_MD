@@ -263,6 +263,11 @@
   .btn-cyber {
     padding: 0.25rem 0.5rem;
   }
+  
+  /* Prevent iOS Safari auto-zoom on focus */
+  .code-output, textarea, input, select {
+    font-size: 16px !important;
+  }
 }
 
 .theme-selector select {
