@@ -132,7 +132,10 @@ export const Editor: React.FC = () => {
         } else if (event.detail.type === 'new') {
           editor.commands.clearContent();
         } else if (event.detail.type === 'demo') {
-          editor.commands.setContent(INITIAL_CONTENT);
+          editor.commands.clearContent();
+          setTimeout(() => {
+            editor.commands.setContent(INITIAL_CONTENT);
+          }, 0);
         }
         
         // Ensure markdown state is synced after external change
