@@ -56,7 +56,7 @@ export const Editor: React.FC = () => {
       Link.configure({ openOnClick: false }),
       Markdown,
     ],
-    content: useAppStore.getState().markdown || INITIAL_CONTENT,
+    content: useAppStore.getState().html || useAppStore.getState().markdown || INITIAL_CONTENT,
     onUpdate: ({ editor }) => {
       // The markdown extension injects getMarkdown method
       const md = (editor.storage as any).markdown.getMarkdown();
@@ -113,8 +113,8 @@ export const Editor: React.FC = () => {
     if (editor) {
       // Hydrate editor content from store if it hasn't been modified yet
       const storeState = useAppStore.getState();
-      if (storeState.markdown && editor.isEmpty) {
-        editor.commands.setContent(storeState.markdown);
+      if ((storeState.html || storeState.markdown) && editor.isEmpty) {
+        editor.commands.setContent(storeState.html || storeState.markdown);
       } else {
         // Trigger an initial update to set the markdown
         const md = (editor.storage as any).markdown.getMarkdown();
