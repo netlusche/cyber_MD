@@ -209,12 +209,33 @@ function App() {
                   <button className="btn-action-dropdown" onClick={() => { handleNewClick(); setActionsOpen(false); }}>NEW</button>
                   <button className="btn-action-dropdown" onClick={() => { handleLoad(); setActionsOpen(false); }}>LOAD .MD</button>
                   <button className="btn-action-dropdown" onClick={() => { handleLoadHtml(); setActionsOpen(false); }}>LOAD .HTML</button>
-                  <button className="btn-action-dropdown" onClick={() => { handleDemo(); setActionsOpen(false); }}>DEMO (TUTORIAL)</button>
+                  <button className="btn-action-dropdown" onClick={() => { handleDemo(); setActionsOpen(false); }}>TUTORIAL</button>
                 </div>
               )}
             </div>
+          </div>
 
-            <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px', height: '24px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', minWidth: '200px' }}>
+            <div className="theme-selector" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
+              <select value={theme} onChange={(e) => setTheme(e.target.value as any)}>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="man-machine">Man Machine</option>
+                <option value="matrix">Matrix Green</option>
+                <option value="lcars">LCARS</option>
+                <option value="megacorp">Megacorp</option>
+                <option value="trauma-team">MedBay</option>
+                <option value="wayyu">Wey-Yu</option>
+                <option value="robco">RobCo</option>
+                <option value="outrun">Outrun</option>
+                <option value="the-grid">The Grid</option>
+                <option value="steampunk">Steampunk</option>
+                <option value="the-force">The Force</option>
+                <option value="arakis">Arrakis</option>
+                <option value="comic">Comic</option>
+              </select>
+            </div>
+            
             <div style={{ display: 'flex', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--accent)' }}>
               <button 
                 className={`btn-cyber ${layout === 'editor' ? 'btn-active' : ''}`} 
@@ -233,27 +254,7 @@ function App() {
               >PREVIEW</button>
             </div>
           </div>
-
-        <div className="theme-selector" style={{ flex: 1, minWidth: '200px', justifyContent: 'center' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
-          <select value={theme} onChange={(e) => setTheme(e.target.value as any)}>
-            <option value="cyberpunk">Cyberpunk</option>
-            <option value="man-machine">Man Machine</option>
-            <option value="matrix">Matrix Green</option>
-            <option value="lcars">LCARS</option>
-            <option value="megacorp">Megacorp</option>
-            <option value="trauma-team">MedBay</option>
-            <option value="wayyu">Wey-Yu</option>
-            <option value="robco">RobCo</option>
-            <option value="outrun">Outrun</option>
-            <option value="the-grid">The Grid</option>
-            <option value="steampunk">Steampunk</option>
-            <option value="the-force">The Force</option>
-            <option value="arakis">Arrakis</option>
-            <option value="comic">Comic</option>
-          </select>
-        </div>
-      </header>
+        </header>
       )}
 
       <div className="split-view" style={{ flex: 1, overflow: 'hidden', margin: 0, padding: isFocusMode ? '0' : '1rem' }}>
