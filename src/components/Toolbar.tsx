@@ -14,7 +14,8 @@ interface ToolbarProps {
 export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   if (!editor) return null;
 
-  const { isFocusMode, setFocusMode } = useAppStore();
+  const { focusMode, setFocusMode } = useAppStore();
+  const [focusOpen, setFocusOpen] = useState(false);
 
   const toggleBold = useCallback(() => editor.chain().focus().toggleBold().run(), [editor]);
   const toggleItalic = useCallback(() => editor.chain().focus().toggleItalic().run(), [editor]);
@@ -243,14 +244,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
       )}
       </div>
 
-      <button 
-        className={`btn-cyber ${isFocusMode ? 'btn-active' : ''}`} 
-        onClick={() => setFocusMode(!isFocusMode)} 
-        title="Zen Mode (Focus)"
-        style={{ flexShrink: 0, margin: 0 }}
-      >
-        {isFocusMode ? <Minimize size={16} /> : <Maximize size={16} />}
-      </button>
+      <div style={{ position: 'relative' }}>
+        <button 
+          className={`btn-cyber ${focusMode !== 'none' ? 'btn-active' : ''}`} 
+          onClick={() => {
+            if (focusMode !== 'none') {
+              setFocusMode('none');
+            } else {
+              setFocusOpen(!focusOpen);
+            }
+          }} 
+          title="Focus Mode"
+          style={{ flexShrink: 0, margin: 0 }}
+        >
+          {focusMode !== 'none' ? <Minimize size={16} /> : <Maximize size={16} />}
+        </button>
+        {focusOpen && (
+          <div className="custom-dropdown-menu" style={{ top: '100%', right: 0, left: 'auto', bottom: 'auto', marginTop: '8px' }}>
+            <button className="btn-action-dropdown" onMouseDown={() => { setFocusMode('zen'); setFocusOpen(false); }}>ZEN MODE</button>
+            <button className="btn-action-dropdown" onMouseDown={() => { setFocusMode('typewriter'); setFocusOpen(false); }}>TYPEWRITER</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

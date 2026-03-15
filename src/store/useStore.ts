@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 
 type Theme = 'cyberpunk' | 'man-machine' | 'matrix' | 'lcars' | 'megacorp' | 'trauma-team' | 'wayyu' | 'robco' | 'outrun' | 'the-grid' | 'steampunk' | 'the-force' | 'arakis' | 'comic';
 
+export type FocusMode = 'none' | 'zen' | 'typewriter';
+
 interface AppState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
@@ -12,8 +14,8 @@ interface AppState {
   setHtml: (html: string) => void;
   json: any;
   setJson: (json: any) => void;
-  isFocusMode: boolean;
-  setFocusMode: (isFocusMode: boolean) => void;
+  focusMode: FocusMode;
+  setFocusMode: (mode: FocusMode) => void;
   layout: 'split' | 'editor' | 'preview';
   setLayout: (layout: 'split' | 'editor' | 'preview') => void;
 }
@@ -29,8 +31,8 @@ export const useAppStore = create<AppState>()(
       setHtml: (html) => set({ html }),
       json: null,
       setJson: (json) => set({ json }),
-      isFocusMode: false,
-      setFocusMode: (isFocusMode) => set({ isFocusMode }),
+      focusMode: 'none',
+      setFocusMode: (mode) => set({ focusMode: mode }),
       layout: 'split',
       setLayout: (layout) => set({ layout }),
     }),

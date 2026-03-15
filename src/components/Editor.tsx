@@ -43,6 +43,7 @@ export const Editor: React.FC = () => {
   const setMarkdown = useAppStore((state) => state.setMarkdown);
   const setHtml = useAppStore((state) => state.setHtml);
   const setJson = useAppStore((state) => state.setJson);
+  const focusMode = useAppStore((state) => state.focusMode);
 
   const editor = useEditor({
     extensions: [
@@ -58,6 +59,28 @@ export const Editor: React.FC = () => {
       Markdown.configure({ html: true }),
     ],
     content: useAppStore.getState().json || useAppStore.getState().html || useAppStore.getState().markdown || INITIAL_CONTENT,
+    onTransaction: ({ editor, transaction }) => {
+      if (useAppStore.getState().focusMode === 'typewriter' && (transaction.docChanged || transaction.selectionSet)) {
+        setTimeout(() => {
+          const { view } = editor;
+          if (!view || !view.dom) return;
+          const { head } = view.state.selection;
+          try {
+            const coords = view.coordsAtPos(head);
+            const scrollContainer = document.getElementById('editor-scroll-container');
+            if (scrollContainer) {
+              const containerRect = scrollContainer.getBoundingClientRect();
+              const relY = coords.top - containerRect.top;
+              const containerCenter = containerRect.height / 2;
+              scrollContainer.scrollBy({
+                top: relY - containerCenter + 20,
+                behavior: 'smooth'
+              });
+            }
+          } catch(e) {}
+        }, 10);
+      }
+    },
     onUpdate: ({ editor }) => {
       // The markdown extension injects getMarkdown method
       const md = (editor.storage as any).markdown.getMarkdown();
@@ -167,8 +190,10 @@ export const Editor: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Toolbar editor={editor} />
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <EditorContent editor={editor} style={{ height: '100%' }} />
+      <div id="editor-scroll-container" style={{ flex: 1, overflow: 'auto' }}>
+        <div style={{ paddingBottom: focusMode === 'typewriter' ? '50vh' : '0', paddingTop: focusMode === 'typewriter' ? '45vh' : '0', minHeight: '100%' }}>
+          <EditorContent editor={editor} style={{ height: '100%' }} />
+        </div>
       </div>
     </div>
   );

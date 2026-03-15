@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './App.css';
 import { Editor } from './components/Editor';
 import { useAppStore } from './store/useStore';
 import { StatusBar } from './components/StatusBar';
 import { ChevronDown } from 'lucide-react';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 
 const formatHTML = (html: string) => {
   let indentLevel = 0;
@@ -39,10 +41,13 @@ const formatHTML = (html: string) => {
 };
 
 function App() {
-  const { theme, setTheme, markdown, html, isFocusMode, layout, setLayout } = useAppStore();
+  const { theme, setTheme, markdown, html, focusMode, layout, setLayout } = useAppStore();
   const [previewMode, setPreviewMode] = useState<'markdown' | 'html'>('markdown');
   const [actionsOpen, setActionsOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [previewExportOpen, setPreviewExportOpen] = useState(false);
+  const pdfExportRef = useRef<HTMLDivElement>(null);
 
   const themesList = [
     { id: 'cyberpunk', name: 'Cyberpunk' },
@@ -79,6 +84,66 @@ function App() {
     window.addEventListener('resize', checkLayout);
     return () => window.removeEventListener('resize', checkLayout);
   }, [layout, setLayout]);
+
+  const handleExportPDF = async () => {
+    if (!pdfExportRef.current) return;
+
+    try {
+      const computedStyles = getComputedStyle(document.body);
+      const bgMain = computedStyles.getPropertyValue('--bg-main').trim() || '#0c0d10';
+
+      const opt: any = {
+        margin:       10,
+        filename:     'cyber_transmission.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+          scale: 2, 
+          useCORS: true, 
+          logging: false,
+          backgroundColor: bgMain
+        },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      // Temporarily make it visible but outside of view for absolute accurate rendering
+      pdfExportRef.current.style.top = '0px';
+      pdfExportRef.current.style.opacity = '1';
+      pdfExportRef.current.style.zIndex = '-9999';
+
+      const pdf = await html2pdf().set(opt).from(pdfExportRef.current).toPdf().get('pdf');
+      const pdfBlob = pdf.output('blob');
+
+      // Put it back
+      pdfExportRef.current.style.top = '-9999px';
+      pdfExportRef.current.style.opacity = '0';
+
+      if ('showSaveFilePicker' in window) {
+        // @ts-ignore
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName: `cyber_transmission.pdf`,
+          types: [{ description: `PDF File`, accept: { 'application/pdf': ['.pdf'] } }],
+        });
+        const writable = await fileHandle.createWritable();
+        await writable.write(pdfBlob);
+        await writable.close();
+      } else {
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cyber_transmission.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error('PDF Export failed during generation:', err);
+      if (pdfExportRef.current) {
+        pdfExportRef.current.style.top = '-9999px';
+        pdfExportRef.current.style.opacity = '0';
+      }
+    }
+  };
 
   const handleExport = async () => {
     try {
@@ -214,7 +279,7 @@ function App() {
 
   return (
     <div className="app-container" data-theme={theme} style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      {!isFocusMode && (
+      {focusMode === 'none' && (
         <header className="app-header" style={{ 
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem',
           padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)',
@@ -303,59 +368,59 @@ function App() {
         </header>
       )}
 
-      <div className="split-view" style={{ flex: 1, overflow: 'hidden', margin: 0, padding: isFocusMode ? '0' : '1rem' }}>
-        {((!isFocusMode && layout !== 'preview') || isFocusMode) && (
-          <div className="editor-pane neo-box" style={{ flex: isFocusMode || layout === 'editor' ? 1 : 0.5, border: isFocusMode ? 'none' : undefined, borderRadius: isFocusMode ? 0 : undefined }}>
+      <div className="split-view" style={{ flex: 1, overflow: 'hidden', margin: 0, padding: focusMode !== 'none' ? '0' : '1rem' }}>
+        {((focusMode === 'none' && layout !== 'preview') || focusMode !== 'none') && (
+          <div className="editor-pane neo-box" style={{ flex: focusMode !== 'none' || layout === 'editor' ? 1 : 0.5, border: focusMode !== 'none' ? 'none' : undefined, borderRadius: focusMode !== 'none' ? 0 : undefined }}>
             <Editor />
-            { (layout === 'editor' || isFocusMode) && (
-              <div className="export-btn-container">
-                <button 
-                  className="btn-cyber" 
-                  onClick={() => {
-                    navigator.clipboard.writeText(markdown).then(() => {
-                      console.log('Copied Markdown to clipboard');
-                    });
-                  }}
-                >
-                  COPY MD
+            { (layout === 'editor' || focusMode !== 'none') && (
+              <div className="export-btn-container" style={{ zIndex: 10 }}>
+                <button className="btn-cyber" onClick={() => setExportOpen(!exportOpen)}>
+                  EXPORT <ChevronDown size={16} style={{ marginLeft: '4px' }}/>
                 </button>
-                <button 
-                  className="btn-cyber" 
-                  onClick={async () => {
-                    try {
-                      if ('showSaveFilePicker' in window) {
-                        // @ts-ignore
-                        const fileHandle = await window.showSaveFilePicker({
-                          suggestedName: `cyber_transmission.md`,
-                          types: [{ description: `MARKDOWN File`, accept: { 'text/markdown': ['.md'] } }],
-                        });
-                        const writable = await fileHandle.createWritable();
-                        await writable.write(markdown);
-                        await writable.close();
-                      } else {
-                        const blob = new Blob([markdown], { type: 'text/markdown' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `cyber_transmission.md`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
+                {exportOpen && (
+                  <div className="custom-dropdown-menu" style={{ bottom: '100%', top: 'auto', marginBottom: '8px', right: 0, left: 'auto' }}>
+                    <button className="btn-action-dropdown" onMouseDown={() => {
+                      navigator.clipboard.writeText(markdown).then(() => {
+                        console.log('Copied Markdown to clipboard');
+                      });
+                      setExportOpen(false);
+                    }}>COPY .MD</button>
+                    <button className="btn-action-dropdown" onMouseDown={async () => {
+                      try {
+                        if ('showSaveFilePicker' in window) {
+                          // @ts-ignore
+                          const fileHandle = await window.showSaveFilePicker({
+                            suggestedName: `cyber_transmission.md`,
+                            types: [{ description: `MARKDOWN File`, accept: { 'text/markdown': ['.md'] } }],
+                          });
+                          const writable = await fileHandle.createWritable();
+                          await writable.write(markdown);
+                          await writable.close();
+                        } else {
+                          const blob = new Blob([markdown], { type: 'text/markdown' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `cyber_transmission.md`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          URL.revokeObjectURL(url);
+                        }
+                      } catch (err) {
+                        console.error('Save failed:', err);
                       }
-                    } catch (err) {
-                      console.error('Save failed:', err);
-                    }
-                  }}
-                >
-                  EXPORT .MD
-                </button>
+                      setExportOpen(false);
+                    }}>EXPORT .MD</button>
+                    <button className="btn-action-dropdown" onMouseDown={() => { handleExportPDF(); setExportOpen(false); }}>EXPORT PDF</button>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
-        {(!isFocusMode && layout !== 'editor') && (
+        {(focusMode === 'none' && layout !== 'editor') && (
           <div className="markdown-pane neo-box" style={{ flex: layout === 'preview' ? 1 : 0.5 }}>
             <div style={{ position: 'absolute', top: '0.5rem', right: '1rem', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
               <button 
@@ -374,13 +439,17 @@ function App() {
               {previewMode === 'markdown' ? markdown : formatHTML(html)}
             </pre>
             
-            <div className="export-btn-container">
-              <button className="btn-cyber" onClick={handleCopy}>
-                COPY {previewMode.toUpperCase()}
+            <div className="export-btn-container" style={{ zIndex: 10 }}>
+              <button className="btn-cyber" onClick={() => setPreviewExportOpen(!previewExportOpen)}>
+                EXPORT <ChevronDown size={16} style={{ marginLeft: '4px' }}/>
               </button>
-              <button className="btn-cyber" onClick={handleExport}>
-                EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}
-              </button>
+              {previewExportOpen && (
+                <div className="custom-dropdown-menu" style={{ bottom: '100%', top: 'auto', marginBottom: '8px', right: 0, left: 'auto' }}>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleCopy(); setPreviewExportOpen(false); }}>COPY {previewMode.toUpperCase()}</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleExport(); setPreviewExportOpen(false); }}>EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}</button>
+                  <button className="btn-action-dropdown" onMouseDown={() => { handleExportPDF(); setPreviewExportOpen(false); }}>EXPORT PDF</button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -425,6 +494,29 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Hidden container for PDF rendering - completely integrated into the React tree */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: '-9999px',
+          left: '0',
+          width: '800px',
+          opacity: 0,
+          pointerEvents: 'none',
+          backgroundColor: 'var(--bg-main)'
+        }}
+      >
+        <div ref={pdfExportRef} style={{ padding: '2rem', backgroundColor: 'var(--bg-main)', color: 'var(--text-main)' }}>
+          <div className="markdown-pane neo-box" style={{ border: 'none', boxShadow: 'none', margin: 0, padding: 0, background: 'transparent' }}>
+            <div 
+              className="code-output prose tiptap" 
+              style={{ whiteSpace: 'normal', wordWrap: 'break-word', color: 'var(--text-main)', fontFamily: 'var(--font-secondary), sans-serif' }}
+              dangerouslySetInnerHTML={{ __html: html }} 
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
