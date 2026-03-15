@@ -42,6 +42,7 @@ const hack = (target) => {
 export const Editor: React.FC = () => {
   const setMarkdown = useAppStore((state) => state.setMarkdown);
   const setHtml = useAppStore((state) => state.setHtml);
+  const setJson = useAppStore((state) => state.setJson);
 
   const editor = useEditor({
     extensions: [
@@ -56,12 +57,13 @@ export const Editor: React.FC = () => {
       Link.configure({ openOnClick: false }),
       Markdown.configure({ html: true }),
     ],
-    content: useAppStore.getState().html || useAppStore.getState().markdown || INITIAL_CONTENT,
+    content: useAppStore.getState().json || useAppStore.getState().html || useAppStore.getState().markdown || INITIAL_CONTENT,
     onUpdate: ({ editor }) => {
       // The markdown extension injects getMarkdown method
       const md = (editor.storage as any).markdown.getMarkdown();
       setMarkdown(md);
       setHtml(editor.getHTML());
+      setJson(editor.getJSON());
     },
     editorProps: {
       attributes: {
@@ -113,13 +115,14 @@ export const Editor: React.FC = () => {
     if (editor) {
       // Hydrate editor content from store if it hasn't been modified yet
       const storeState = useAppStore.getState();
-      if ((storeState.html || storeState.markdown) && editor.isEmpty) {
-        editor.commands.setContent(storeState.html || storeState.markdown);
+      if ((storeState.json || storeState.html || storeState.markdown) && editor.isEmpty) {
+        editor.commands.setContent(storeState.json || storeState.html || storeState.markdown);
       } else {
         // Trigger an initial update to set the markdown
         const md = (editor.storage as any).markdown.getMarkdown();
         setMarkdown(md);
         setHtml(editor.getHTML());
+        setJson(editor.getJSON());
       }
 
       // Listen for external commands (Load/New)
@@ -135,6 +138,7 @@ export const Editor: React.FC = () => {
           const newMd = (editor.storage as any).markdown.getMarkdown();
           setMarkdown(newMd);
           setHtml(editor.getHTML());
+          setJson(editor.getJSON());
         }, 10);
       };
 
