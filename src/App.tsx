@@ -315,7 +315,7 @@ function App() {
             </pre>
             
             <div className="export-btn-container">
-              <button className="btn-action" onClick={handleCopy} style={{ background: 'transparent', color: 'var(--accent)' }}>
+              <button className="btn-action" onClick={handleCopy} style={{ color: 'var(--accent)' }}>
                 COPY {previewMode.toUpperCase()}
               </button>
               <button className="btn-action" onClick={handleExport}>
