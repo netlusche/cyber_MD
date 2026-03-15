@@ -106,7 +106,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
   }, [editor]);
 
   return (
-    <div ref={toolbarRef} className="toolbar-container neo-border" style={{ position: 'relative', paddingRight: '3.5rem' }}>
+    <div ref={toolbarRef} className="toolbar-container neo-border" style={{ position: 'relative', paddingRight: '2.75rem' }}>
       {promptConfig && (
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
@@ -237,7 +237,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor }) => {
         className={`btn-cyber ${isFocusMode ? 'btn-active' : ''}`} 
         onClick={() => setFocusMode(!isFocusMode)} 
         title="Zen Mode (Focus)"
-        style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 100 }}
+        style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '0.25rem', zIndex: 100 }}
       >
         {isFocusMode ? <Minimize size={16} /> : <Maximize size={16} />}
       </button>
