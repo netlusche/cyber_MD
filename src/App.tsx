@@ -137,8 +137,8 @@ function App() {
   return (
     <div className="app-container" data-theme={theme} style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {!isFocusMode && (
-        <header style={{ 
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+        <header className="app-header" style={{ 
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem',
           padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)',
           flexShrink: 0
         }}>
@@ -150,7 +150,7 @@ function App() {
             </h2>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', flex: 1, justifyContent: 'center' }}>
             <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
             <button className="btn-cyber" onClick={handleLoad}>LOAD .MD</button>
             <div style={{ width: '1px', background: 'var(--border)', margin: '0 8px' }} />
@@ -173,7 +173,7 @@ function App() {
             </div>
           </div>
 
-        <div className="theme-selector">
+        <div className="theme-selector" style={{ flex: 1, minWidth: '200px', justifyContent: 'center' }}>
           <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>THEME:</label>
           <select value={theme} onChange={(e) => setTheme(e.target.value as any)}>
             <option value="cyberpunk">Neon Cyberpunk</option>
