@@ -349,7 +349,7 @@ function App() {
                 className={`btn-cyber ${layout === 'editor' ? 'btn-active' : ''}`} 
                 onClick={() => setLayout('editor')}
                 style={{ border: 'none', borderRadius: 0, margin: 0 }}
-              >EDITOR</button>
+              >WYSIWYG</button>
               <button 
                 className={`btn-cyber split-btn-toggle ${layout === 'split' ? 'btn-active' : ''}`} 
                 onClick={() => setLayout('split')}
@@ -359,7 +359,7 @@ function App() {
                 className={`btn-cyber ${layout === 'preview' ? 'btn-active' : ''}`} 
                 onClick={() => setLayout('preview')}
                 style={{ border: 'none', borderRadius: 0, margin: 0 }}
-              >PREVIEW</button>
+              >CODE</button>
             </div>
           </div>
         </header>
