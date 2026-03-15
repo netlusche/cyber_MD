@@ -49,3 +49,6 @@ Before focusing on the edge-cases, you must implement a robust baseline of E2E a
 1. Setup the testing infrastructure (`npm install -D vitest @playwright/test ...`).
 2. Configure tests to run headlessly over the Vite dev server.
 3. Commit incrementally as you resolve each of the 5 key test scenarios. Wait for user review if tests require deep mocking of browser filesystems.
+4. **Documentation:** Produce a comprehensive markdown file at `/manuals/test_automation.md`. This file MUST contain:
+   - Instructions on how to run the automated tests locally (Vitest & Playwright commands).
+   - A structured list and brief explanation of every test case implemented, ensuring future developers understand *what* is being tested and *why* (especially regarding the regression bugs).
