@@ -96,8 +96,17 @@ function App() {
 
   return (
     <div className="app-container" data-theme={theme}>
-      <header style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)', textShadow: '0 0 5px var(--accent-glow)' }}>CYBER_MD // TERMINAL</h2>
+      <header style={{ 
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+        padding: '1rem', borderBottom: '1px solid var(--border)', backgroundColor: 'var(--bg-panel)' 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <img src="/cybermd-logo.png" alt="CyberMD Logo" style={{ height: '48px', objectFit: 'contain' }} />
+          <h2 className="app-title">
+            CYBER_MD
+            <span className="title-suffix">// TERMINAL</span>
+          </h2>
+        </div>
         
         <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
           <button className="btn-cyber" onClick={handleNewClick}>NEW</button>
