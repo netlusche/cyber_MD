@@ -99,10 +99,12 @@ export const Editor: React.FC = () => {
             const reader = new FileReader();
             reader.onload = (e) => {
               if (e.target?.result) {
+                // In JSDOM testing, posAtCoords might fail or return null, fallback to current selection
                 const schema = view.state.schema;
-                const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                const coordinates = view.posAtCoords ? view.posAtCoords({ left: event.clientX, top: event.clientY }) : null;
+                const insertPos = coordinates?.pos || view.state.selection.to;
                 const node = schema.nodes.image.create({ src: e.target.result as string });
-                const transaction = view.state.tr.insert(coordinates?.pos || view.state.selection.to, node);
+                const transaction = view.state.tr.insert(insertPos, node);
                 view.dispatch(transaction);
               }
             };
