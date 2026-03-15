@@ -315,10 +315,10 @@ function App() {
             </pre>
             
             <div className="export-btn-container">
-              <button className="btn-action" onClick={handleCopy} style={{ color: 'var(--accent)' }}>
+              <button className="btn-cyber" onClick={handleCopy}>
                 COPY {previewMode.toUpperCase()}
               </button>
-              <button className="btn-action" onClick={handleExport}>
+              <button className="btn-cyber" onClick={handleExport}>
                 EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}
               </button>
             </div>
