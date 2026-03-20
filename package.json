@@ -1,7 +1,7 @@
 {
   "name": "cybermd",
   "private": true,
-  "version": "1.4.2",
+  "version": "1.4.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -21,6 +21,7 @@
     "@tiptap/pm": "^3.20.1",
     "@tiptap/react": "^3.20.1",
     "@tiptap/starter-kit": "^3.20.1",
+    "html-docx-js-typescript": "^0.1.5",
     "html2pdf.js": "^0.14.0",
     "isomorphic-dompurify": "^3.3.0",
     "lucide-react": "^0.577.0",

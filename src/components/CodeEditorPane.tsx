@@ -78,11 +78,13 @@ export const CodeEditorPane: React.FC = () => {
   };
 
   const handleExportPDF = async () => {
-    // ... we can lift the dispatch logic out or leave it for now, 
-    // it was previously using the hidden rendering container in App.tsx
     // The easiest way to trigger export PDF is to dispatch a custom event that App.tsx listens to,
     // or pass handleExportPDF as a prop. Let's dispatch a custom event.
     window.dispatchEvent(new CustomEvent('cybermd-export-pdf'));
+  };
+
+  const handleExportDocx = async () => {
+    window.dispatchEvent(new CustomEvent('cybermd-export-docx'));
   };
 
   const handleExport = async () => {
@@ -169,6 +171,7 @@ export const CodeEditorPane: React.FC = () => {
             <button className="btn-action-dropdown" onMouseDown={() => { handleCopy(); setPreviewExportOpen(false); }}>COPY {previewMode.toUpperCase()}</button>
             <button className="btn-action-dropdown" onMouseDown={() => { handleExport(); setPreviewExportOpen(false); }}>EXPORT .{previewMode === 'markdown' ? 'MD' : 'HTML'}</button>
             <button className="btn-action-dropdown" onMouseDown={() => { handleExportPDF(); setPreviewExportOpen(false); }}>EXPORT PDF</button>
+            <button className="btn-action-dropdown" onMouseDown={() => { handleExportDocx(); setPreviewExportOpen(false); }}>EXPORT .DOCX</button>
           </div>
         )}
       </div>

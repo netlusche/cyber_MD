@@ -7,6 +7,7 @@ import { CodeEditorPane } from './components/CodeEditorPane';
 import { ChevronDown } from 'lucide-react';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
+import { asBlob } from 'html-docx-js-typescript';
 
 const App = () => {
   const { theme, setTheme, markdown, html, focusMode, layout, setLayout } = useAppStore();
@@ -17,8 +18,13 @@ const App = () => {
 
   useEffect(() => {
     const handlePdfExport = () => handleExportPDF();
+    const handleDocxExport = () => handleExportDocx();
     window.addEventListener('cybermd-export-pdf', handlePdfExport);
-    return () => window.removeEventListener('cybermd-export-pdf', handlePdfExport);
+    window.addEventListener('cybermd-export-docx', handleDocxExport);
+    return () => {
+      window.removeEventListener('cybermd-export-pdf', handlePdfExport);
+      window.removeEventListener('cybermd-export-docx', handleDocxExport);
+    };
   }, []);
 
   const themesList = [
@@ -186,6 +192,51 @@ const App = () => {
         pdfExportRef.current.style.top = '-9999px';
         pdfExportRef.current.style.opacity = '0';
       }
+    }
+  };
+
+  const handleExportDocx = async () => {
+    try {
+      let fileHandle: FileSystemFileHandle | undefined;
+      // Request file picker BEFORE the heavy DOCX generation to retain user gesture
+      if ('showSaveFilePicker' in window) {
+        // @ts-ignore
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: `cyber_transmission.docx`,
+          types: [{ description: `Word Document`, accept: { 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'] } }],
+        });
+      }
+
+      const htmlString = `
+        <!DOCTYPE html>
+        <html>
+          <head><meta charset="UTF-8"></head>
+          <body>${html}</body>
+        </html>
+      `;
+      // Generate DOCX blob natively from HTML strings
+      const docxBlob = await asBlob(htmlString) as Blob;
+
+      if (fileHandle) {
+        const writable = await fileHandle.createWritable();
+        await writable.write(docxBlob);
+        await writable.close();
+      } else {
+        const url = URL.createObjectURL(docxBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cyber_transmission.docx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('DOCX Export cancelled by user.');
+        return;
+      }
+      console.error('DOCX Export failed during generation:', err);
     }
   };
 
@@ -412,6 +463,7 @@ const App = () => {
                       setExportOpen(false);
                     }}>EXPORT .MD</button>
                     <button className="btn-action-dropdown" onMouseDown={() => { handleExportPDF(); setExportOpen(false); }}>EXPORT PDF</button>
+                    <button className="btn-action-dropdown" onMouseDown={() => { handleExportDocx(); setExportOpen(false); }}>EXPORT .DOCX</button>
                   </div>
                 )}
               </div>
