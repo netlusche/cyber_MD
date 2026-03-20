@@ -62,8 +62,15 @@ const App = () => {
     if (!pdfExportRef.current) return;
 
     try {
-      const computedStyles = getComputedStyle(document.body);
-      const bgMain = computedStyles.getPropertyValue('--bg-main').trim() || '#0c0d10';
+      let fileHandle: FileSystemFileHandle | undefined;
+      // Request file picker BEFORE the heavy PDF generation to retain user gesture
+      if ('showSaveFilePicker' in window) {
+        // @ts-ignore
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: `cyber_transmission.pdf`,
+          types: [{ description: `PDF File`, accept: { 'application/pdf': ['.pdf'] } }],
+        });
+      }
 
       const opt: any = {
         margin:       10,
@@ -73,33 +80,92 @@ const App = () => {
           scale: 2, 
           useCORS: true, 
           logging: false,
-          backgroundColor: bgMain
+          backgroundColor: '#ffffff' // Force white background for the PDF
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      // Temporarily make it visible but outside of view for absolute accurate rendering
-      pdfExportRef.current.style.top = '0px';
-      pdfExportRef.current.style.opacity = '1';
-      pdfExportRef.current.style.zIndex = '-9999';
+      // Create a clone of the render container so we can sanitize it without touching the React DOM
+      const clone = pdfExportRef.current.cloneNode(true) as HTMLElement;
+      clone.style.top = '0px';
+      clone.style.opacity = '1';
+      clone.style.zIndex = '-9999';
+      
+      // Enforce the 'plain' light theme on the cloned container for clean PDF output
+      clone.setAttribute('data-theme', 'plain');
+      clone.style.backgroundColor = '#ffffff';
+      clone.style.color = '#333333';
+      
+      // Remove the cyberpunk UI box shadow and borders from the markdown container
+      const markdownPane = clone.querySelector('.markdown-pane');
+      if (markdownPane) {
+        markdownPane.classList.remove('neo-box');
+        (markdownPane as HTMLElement).style.border = 'none';
+        (markdownPane as HTMLElement).style.boxShadow = 'none';
+        (markdownPane as HTMLElement).style.background = 'transparent';
+      }
 
-      const pdf = await html2pdf().set(opt).from(pdfExportRef.current).toPdf().get('pdf');
-      const pdfBlob = pdf.output('blob');
+      const codeOutput = clone.querySelector('.code-output');
+      if (codeOutput) {
+        (codeOutput as HTMLElement).style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        (codeOutput as HTMLElement).style.color = '#333333';
+      }
 
-      // Put it back
-      pdfExportRef.current.style.top = '-9999px';
-      pdfExportRef.current.style.opacity = '0';
+      // Explicitly override ALL fonts via an injected style block so headers and specific elements aren't missed
+      const styleNode = document.createElement('style');
+      styleNode.innerHTML = `
+        * {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        }
+        pre, code, pre *, code * {
+          font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+        }
+      `;
+      clone.appendChild(styleNode);
 
-      if ('showSaveFilePicker' in window) {
-        // @ts-ignore
-        const fileHandle = await window.showSaveFilePicker({
-          suggestedName: `cyber_transmission.pdf`,
-          types: [{ description: `PDF File`, accept: { 'application/pdf': ['.pdf'] } }],
-        });
+      document.body.appendChild(clone);
+
+      // Allow the DOM to repaint so html2canvas captures valid content after system dialog closes
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Workaround for html2canvas IndexSizeError: 
+      // It crashes when text-transform: uppercase changes string length (e.g. 'ß' -> 'SS') 
+      // or when encountering zero-width spaces injected by Prosemirror.
+      const sanitizeNode = (node: Node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          Array.from(el.childNodes).forEach(sanitizeNode);
+          
+          const style = window.getComputedStyle(el);
+          const isUppercase = style.textTransform === 'uppercase';
+          
+          for (let i = 0; i < el.childNodes.length; i++) {
+            const child = el.childNodes[i];
+            if (child.nodeType === Node.TEXT_NODE && child.textContent) {
+               let text = child.textContent.replace(/[\u200B-\u200D\uFEFF]/g, '');
+               if (isUppercase) text = text.toUpperCase();
+               child.textContent = text;
+            }
+          }
+          if (isUppercase) {
+             el.style.setProperty('text-transform', 'none', 'important');
+          }
+        }
+      };
+      
+      sanitizeNode(clone);
+
+      const pdfBlob = await html2pdf().set(opt).from(clone).output('blob');
+      
+      document.body.removeChild(clone);
+
+      if (fileHandle) {
         const writable = await fileHandle.createWritable();
         await writable.write(pdfBlob);
         await writable.close();
       } else {
+        // Fallback for browsers without File System Access API
         const url = URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
@@ -109,7 +175,12 @@ const App = () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        // User cancelled the file picker, no need to log as error
+        console.log('PDF Export cancelled by user.');
+        return;
+      }
       console.error('PDF Export failed during generation:', err);
       if (pdfExportRef.current) {
         pdfExportRef.current.style.top = '-9999px';
