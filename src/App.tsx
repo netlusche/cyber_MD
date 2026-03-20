@@ -210,7 +210,22 @@ const App = () => {
       const htmlString = `
         <!DOCTYPE html>
         <html>
-          <head><meta charset="UTF-8"></head>
+          <head>
+            <meta charset="UTF-8">
+            <style>
+              body, p, h1, h2, h3, h4, h5, h6, li, td, th {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+              }
+              table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+              th, td { 
+                text-align: left !important; 
+                vertical-align: top !important; 
+                border: 1px solid #000000; 
+                padding: 6px; 
+              }
+              th { background-color: #f2f2f2; font-weight: bold; }
+            </style>
+          </head>
           <body>${html}</body>
         </html>
       `;
